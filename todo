@@ -1,0 +1,47 @@
+Datamining program for 1.13+ (focus on whatever version 2b2t is on)
+Inspo DaMatrix/SaveSearcher
+
+Use Querz/Nbt (version 7) for reading mca's
+Features needed:
+for all: with optional limits by y, outputs by default the coordinates of the match to file of the same name as the module
+* Sign search module
+ - clean output mode without json
+ - raw output mode
+ - can search for specific string to only extract those signs
+
+* BlockEntity search module
+ - optionally by blockentity type
+ - option to output full raw nbt.
+
+* Entity search module
+ - optionally by entity type
+ - option for tamed only
+ - option for converting owner-uuid to username using mojang api
+ - output useful info by default (customname, health)
+ - option to output full raw nbt
+
+* Block search module
+ - specify block type and optionally meta
+pre-requisite: chunk sections abstracted away from palette, want something like chunk.getBlockAt(x,y,z) but should still skip
+ the entire section if its a singlevaluepaletted section (like if searching for water and finding a singlevaluepalleted section of water,
+  add all coords of the section to output from only the first check of the section, don't check every coord of the section.)
+
+* Item search module
+ - search for items inside of block entities and entity inventories (item frames, donkey/boat chests etc.)
+ - premade book item searcher with special formatting
+ - premade map item searcher with option for image generation
+
+* Version-guesser module - not full on chunkversionchecker, only using block types in chunks to guess version:
+need to specify dimension
+Overworld:
+ - Contains deepslate above y5 (check 1 section slice above y5 for deepslate): newer than 1.17
+ - Contains andesite, diorite or granite: newer than 1.7
+ - else: older than 1.8
+Nether:
+ - Biome is not nether_wastes: newer than 1.15
+ - Contains nether_gold_ore: newer than 1.15
+ - Contains magma: newer than 1.9 (need only check y27-y36)
+ - Contains quartz ore: newer than 1.4
+ - else: older than 1.5
+
+ - option to generate image or coords
