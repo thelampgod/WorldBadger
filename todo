@@ -3,7 +3,11 @@ Inspo DaMatrix/SaveSearcher
 
 Use Querz/Nbt (version 7) for reading mca's
 Features needed:
-for all: with optional limits by y, outputs by default the coordinates of the match to file of the same name as the module
+for all modules:
+ - with optional limits by y
+ - outputs by default the coordinates of the match to file of the same name as the module
+ - option to generate result as top-down image - or gdal2tiles tiled map with coordinates added
+
 * Sign search module
  - clean output mode without json
  - raw output mode
@@ -45,3 +49,21 @@ Nether:
  - else: older than 1.5
 
  - option to generate image or coords
+
+* Diff module
+ - input 2 worlds and print differences:
+    -> as csv (x,y,z,was,is)
+    -> as stats per block type (example: obsidian: +52000, -5000)
+    -> as new world
+         - modes:
+            -> additions: keeps blocks that were added in the newer world
+            -> deletions: keeps blocks that were removed in the newer world
+            -> untouched: keeps blocks that were not modified
+    -> as image (green added, red deleted)
+ - get age of chunks for compare order, (by default), with option to override by world input order
+
+* Biomes module
+ - optionally by biome type
+ - output as top-down-image
+ - choose which y to use for the image
+ - if output as csv, only print for every unique biome pattern for each y or section in the chunk (biomes for sections above ground are normally all the same)
