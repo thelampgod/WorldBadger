@@ -44,7 +44,7 @@ public class World {
 
         try (var stream = Files.list(regionDir)) {
             stream
-                    .filter(path -> path.endsWith(".mca"))
+                    .filter(path -> path.toFile().getName().endsWith(".mca"))
                     .filter(path -> {
                         try {
                             return Files.size(path) > 0;

@@ -8,6 +8,7 @@ import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SignModule extends BlockEntitySearchModule {
@@ -26,7 +27,7 @@ public class SignModule extends BlockEntitySearchModule {
                     signs.add(SignData.fromModel(sign));
                 });
 
-        return signs;
+        return signs.isEmpty() ? null : signs;
     }
 
     @Override
@@ -62,6 +63,11 @@ public class SignModule extends BlockEntitySearchModule {
                     front_text.getString("color"),
                     front_text.getBoolean("has_glowing_text")
             );
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d,%d,%d,%s,%s,%s", x,y,z,Arrays.toString(frontText), color, glowing);
         }
     }
 }

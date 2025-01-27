@@ -33,6 +33,7 @@ public class RunCommand extends Command {
         }
 
         main.getWorldManager().startSearch();
+        System.out.println("Done!");
     }
 
     @Override

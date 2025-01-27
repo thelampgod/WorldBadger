@@ -2,6 +2,9 @@ package com.github.thelampgod.worldbadger.commands.impl;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.Command;
+import com.github.thelampgod.worldbadger.world.World;
+
+import java.io.IOException;
 
 public class SetInputCommand extends Command {
 
@@ -27,7 +30,17 @@ public class SetInputCommand extends Command {
             }
         }
 
-        main.getWorldManager().setWorld(folder, dim);
+        try {
+            World world = main.getWorldManager().setWorld(folder, dim);
+
+            System.out.printf("Loaded world %s (regions=%d, entities=%d)%n",
+                    world.getWorldRoot(),
+                    world.getRegions().size(),
+                    world.getEntities().size()
+            );
+        } catch (IOException e) {
+            System.err.println("Failed to load world: " + e.getMessage());
+        }
     }
 
     @Override

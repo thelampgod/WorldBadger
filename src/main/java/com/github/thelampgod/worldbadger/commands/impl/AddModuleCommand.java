@@ -14,6 +14,7 @@ public class AddModuleCommand extends Command {
 
     @Override
     public void exec(String[] args) {
+        super.exec(args);
         var opt = main.getModuleManager().findModule(args[0]);
 
         if (opt.isEmpty()) {
@@ -23,6 +24,8 @@ public class AddModuleCommand extends Command {
 
         module.options(Arrays.copyOfRange(args,1, args.length));
         module.setToggled(true);
+
+        System.out.println(module.getName() + " toggled");
     }
 
     @Override

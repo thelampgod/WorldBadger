@@ -30,6 +30,7 @@ public class ModuleManager {
     }
 
     public void processChunk(Chunk chunk) {
+        if (chunk == null) return;
         getEnabledModules().forEach(module -> {
             if (module instanceof BlockEntitySearchModule mod) {
                 List<CompoundTag> blockEntities = chunk.getData().getList("block_entities").stream()
@@ -37,7 +38,9 @@ public class ModuleManager {
                         .toList();
 
                 Object returned = mod.processChunkBlockEntities(blockEntities);
-                System.out.println(returned.toString());
+
+                if (returned == null) return;
+                System.out.println(returned);
             }
 
         });
