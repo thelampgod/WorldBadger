@@ -1,8 +1,6 @@
 package com.github.thelampgod.worldbadger.world;
 
-import com.github.thelampgod.worldbadger.modules.SearchModule;
 import lombok.Getter;
-import net.querz.mca.MCAFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,8 +10,8 @@ import java.util.List;
 
 @Getter
 public class World {
-    private List<MCAFile> regions = new ArrayList<>();
-    private List<MCAFile> entities = new ArrayList<>();
+    private List<UnloadableMcaFile> regions = new ArrayList<>();
+    private List<UnloadableMcaFile> entities = new ArrayList<>();
 
     private final Path worldRoot;
 
@@ -35,8 +33,8 @@ public class World {
         this.entities = getRegions(entitiesDir);
     }
 
-    private List<MCAFile> getRegions(Path regionDir) throws IOException {
-        List<MCAFile> temp = new ArrayList<>();
+    private List<UnloadableMcaFile> getRegions(Path regionDir) throws IOException {
+        List<UnloadableMcaFile> temp = new ArrayList<>();
 
         if (!Files.exists(regionDir)) {
             return temp;
@@ -54,7 +52,7 @@ public class World {
                         }
                     })
                     .map(Path::toFile)
-                    .map(MCAFile::new)
+                    .map(UnloadableMcaFile::new)
                     .forEach(temp::add);
         }
 

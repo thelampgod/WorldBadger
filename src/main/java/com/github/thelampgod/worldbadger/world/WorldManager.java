@@ -30,6 +30,8 @@ public class WorldManager {
 
                     } catch (IOException e) {
                         System.err.println("Failed to load region " + region.getName());
+                    } finally {
+                        region.unload();
                     }
                 });
     }
