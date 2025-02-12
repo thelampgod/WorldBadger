@@ -16,8 +16,8 @@ public class InputHandler {
     }
 
     public void listenForInput() {
+        System.out.print("> ");
         while (scanner.hasNext()) {
-            System.out.print("> ");
             String[] split = scanner.nextLine().split(" ");
 
             String commandName = split[0];
@@ -26,17 +26,17 @@ public class InputHandler {
                 commandArgs = Arrays.copyOfRange(split, 1, split.length);
             }
 
-            var command = main.getCommandManager().findCommand(commandName);
-
-            if (command == null) {
-                System.err.println(commandName + ": command not found.");
-                return;
-            }
-
             try {
+                var command = main.getCommandManager().findCommand(commandName);
+
                 command.exec(commandArgs);
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+            } catch (CommandNotFoundException e) {
+                main.logger.error("{}: command not found.", commandName);
+            }
+            catch (Exception e) {
+                main.logger.error(e.getMessage());
+            } finally {
+                System.out.print("> ");
             }
         }
 

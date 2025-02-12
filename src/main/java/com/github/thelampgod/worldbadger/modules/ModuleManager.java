@@ -3,7 +3,6 @@ package com.github.thelampgod.worldbadger.modules;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
-import net.querz.nbt.ListTag;
 
 import java.util.HashSet;
 import java.util.List;

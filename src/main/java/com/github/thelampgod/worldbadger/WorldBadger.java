@@ -5,9 +5,15 @@ import com.github.thelampgod.worldbadger.commands.InputHandler;
 import com.github.thelampgod.worldbadger.modules.ModuleManager;
 import com.github.thelampgod.worldbadger.world.WorldManager;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @Getter
 public class WorldBadger {
+
+    public Logger logger = LogManager.getLogger(this.getClass());
+
     private CommandManager commandManager;
     private WorldManager worldManager;
     private ModuleManager moduleManager;
@@ -15,9 +21,9 @@ public class WorldBadger {
     private InputHandler inputHandler;
 
     public WorldBadger() {
-        System.out.println("Starting WorldBadger 1.0");
+        logger.info("Starting WorldBadger 1.0");
         init(this);
-        System.out.println("Welcome! Type \"commands\" for commands");
+        logger.info("Welcome! Type \"commands\" for commands");
 
         inputHandler.listenForInput();
     }

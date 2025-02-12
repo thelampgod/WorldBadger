@@ -7,7 +7,6 @@ import com.github.thelampgod.worldbadger.commands.impl.SetInputCommand;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class CommandManager {
     private final Map<String, Command> commandsMap = new HashMap<>();
@@ -26,7 +25,10 @@ public class CommandManager {
         commandsMap.put(name, instance);
     }
 
-    public Command findCommand(String commandName) {
-        return commandsMap.get(commandName);
+    public Command findCommand(String commandName) throws CommandNotFoundException {
+        final Command command = commandsMap.get(commandName);
+
+        if (command == null) throw new CommandNotFoundException();
+        return command;
     }
 }

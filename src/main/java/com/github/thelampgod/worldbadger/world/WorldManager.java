@@ -29,7 +29,7 @@ public class WorldManager {
                         region.forEach(chunk -> main.getModuleManager().processChunk(chunk));
 
                     } catch (IOException e) {
-                        System.err.println("Failed to load region " + region.getName());
+                        main.logger.error("Failed to load region {}", region.getName());
                     } finally {
                         region.unload();
                     }

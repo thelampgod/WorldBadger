@@ -2,7 +2,6 @@ package com.github.thelampgod.worldbadger.commands.impl;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.Command;
-import com.github.thelampgod.worldbadger.modules.SearchModule;
 
 public class RunCommand extends Command {
     public RunCommand(WorldBadger main) {
@@ -15,7 +14,7 @@ public class RunCommand extends Command {
         var world = main.getWorldManager().getWorld();
         var enabledModules = main.getModuleManager().getEnabledModules();
 
-        System.out.printf("Starting search of world %s (regions=%d, entities=%d) with %d modules:%n",
+        main.logger.info("Starting search of world {} (regions={}, entities={}) with {} modules:",
                 world.getWorldRoot(),
                 world.getRegions().size(),
                 world.getEntities().size(),
@@ -26,14 +25,14 @@ public class RunCommand extends Command {
             String moduleName = enabledModules.get(i).getName();
 
             if (i != enabledModules.size() - 1) {
-                System.out.printf("%s, ", moduleName);
+                main.logger.info("{}, ", moduleName);
                 continue;
             }
-            System.out.printf(moduleName);
+            main.logger.info(moduleName);
         }
 
         main.getWorldManager().startSearch();
-        System.out.println("Done!");
+        main.logger.info("Done!");
     }
 
     @Override

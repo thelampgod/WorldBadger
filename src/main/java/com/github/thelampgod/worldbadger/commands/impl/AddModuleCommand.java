@@ -25,7 +25,7 @@ public class AddModuleCommand extends Command {
         module.options(Arrays.copyOfRange(args,1, args.length));
         module.setToggled(true);
 
-        System.out.println(module.getName() + " toggled");
+        main.logger.info("{} toggled", module.getName());
     }
 
     @Override
