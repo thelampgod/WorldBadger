@@ -28,12 +28,11 @@ public class InputHandler {
 
             try {
                 var command = main.getCommandManager().findCommand(commandName);
-
                 command.exec(commandArgs);
+
             } catch (CommandNotFoundException e) {
                 main.logger.error("{}: command not found.", commandName);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 main.logger.error(e.getMessage());
             } finally {
                 System.out.print("> ");

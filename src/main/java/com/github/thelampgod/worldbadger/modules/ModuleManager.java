@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
@@ -14,6 +15,7 @@ public class ModuleManager {
 
     public ModuleManager() {
         modules.add(new SignModule());
+        modules.add(new BlockModule());
     }
 
     public Optional<SearchModule> findModule(String name) {
@@ -36,12 +38,16 @@ public class ModuleManager {
                         .map(CompoundTag.class::cast)
                         .toList();
 
-                Object returned = mod.processChunkBlockEntities(blockEntities);
+                var ret = mod.processChunkBlockEntities(blockEntities);
 
-                if (returned == null) return;
-                System.out.println(returned);
+                if (ret == null) return;
+                System.out.println(ret);
+                return;
             }
 
+            var ret = module.processChunk(chunk);
+            if (ret == null) return;
+            System.out.println(ret);
         });
 
     }
