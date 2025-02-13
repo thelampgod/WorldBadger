@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 public class BlockModule extends SearchModule {
-    private final Set<String> blockTypesToSearchFor = new HashSet<>();
+    private final Map<String, Map<String, String>> blockNameToOptionsMap = new HashMap();
+
+    private final Set<String> validOptions = Sets.of("id", "min", "max", "type");
 
     public BlockModule() {
         super("block");
@@ -22,8 +24,28 @@ public class BlockModule extends SearchModule {
             throw new IllegalArgumentException("Please specify blocks to search for. ('add block minecraft:bedrock minecraft:water' for example)");
         }
         for (String option : options) {
-            if (!option.startsWith("minecraft:")) continue;
-            blockTypesToSearchFor.add(option);
+            private final Map<String, String> optionToValueMap = new HashMap<>();
+
+            // "add block id=minecraft:bedrock,type=bla,min=5,max=6 id=bla..." etc
+
+            var blockOptions = option.split(",");
+            if (!contains("id", blockOptions)) {
+                throw new IllegalArgumentException("id option required!");
+            }
+
+            String id;
+            for (String blockOption : blockOptions) {
+                String[] properties = blockOption.split("=");
+                String optionName = properties[0].toLowerCase();
+                String val = properties[1];
+                if (!validOptions.contains(optionName)) continue;
+                if (optionName.equals("id")) {
+                    id = val;
+                }
+                optionsToValueMap.put(optionName, val);
+            }
+
+            blockNameToOptionsMap.put(id, optionsToValueMap);
         }
     }
 
@@ -55,5 +77,11 @@ public class BlockModule extends SearchModule {
 
 
 
+    private boolean contains(String s, String[] arr) {
+        for (String i : arr) {
+            if (i.equals(s)) return true;
+        }
+        return false;
+    }
 
 }
