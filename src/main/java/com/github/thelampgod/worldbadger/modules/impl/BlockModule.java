@@ -6,13 +6,15 @@ import net.querz.nbt.CompoundTag;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 public class BlockModule extends SearchModule {
-    private final Map<String, Map<String, String>> blockNameToOptionsMap = new HashMap();
+    private final Map<String, Map<String, String>> blockNameToOptionsMap = new HashMap<>();
 
-    private final Set<String> validOptions = Sets.of("id", "min", "max", "type");
+    private final Set<String> validOptions = Set.of("id", "min", "max", "type");
 
     public BlockModule() {
         super("block");
@@ -24,16 +26,13 @@ public class BlockModule extends SearchModule {
             throw new IllegalArgumentException("Please specify blocks to search for. ('add block minecraft:bedrock minecraft:water' for example)");
         }
         for (String option : options) {
-            private final Map<String, String> optionToValueMap = new HashMap<>();
+            final Map<String, String> optionToValueMap = new HashMap<>();
 
             // "add block id=minecraft:bedrock,type=bla,min=5,max=6 id=bla..." etc
 
             var blockOptions = option.split(",");
-            if (!contains("id", blockOptions)) {
-                throw new IllegalArgumentException("id option required!");
-            }
 
-            String id;
+            String id = null;
             for (String blockOption : blockOptions) {
                 String[] properties = blockOption.split("=");
                 String optionName = properties[0].toLowerCase();
@@ -42,11 +41,17 @@ public class BlockModule extends SearchModule {
                 if (optionName.equals("id")) {
                     id = val;
                 }
-                optionsToValueMap.put(optionName, val);
+                optionToValueMap.put(optionName, val);
             }
 
-            blockNameToOptionsMap.put(id, optionsToValueMap);
+            if (id == null) {
+                throw new IllegalArgumentException("id option required!");
+            }
+
+            blockNameToOptionsMap.put(id, optionToValueMap);
         }
+
+        System.out.println(blockNameToOptionsMap);
     }
 
     @Override
@@ -56,12 +61,12 @@ public class BlockModule extends SearchModule {
         list.stream()
                 .map(CompoundTag.class::cast)
                 .forEach(sect -> {
-                    if (foundTypes.size() == blockTypesToSearchFor.size()) return;
+                    if (foundTypes.size() == blockNameToOptionsMap.keySet().size()) return;
                     var palette = sect.getCompound("block_states").getList("palette");
                     palette.stream()
                             .map(CompoundTag.class::cast)
                             .map(cmpnd -> cmpnd.getString("Name"))
-                            .filter(blockTypesToSearchFor::contains)
+                            .filter(blockNameToOptionsMap.keySet()::contains)
                             .forEach(foundTypes::add);
         });
 
