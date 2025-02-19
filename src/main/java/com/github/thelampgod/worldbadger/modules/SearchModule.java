@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.querz.mca.Chunk;
 
+import java.util.*;
+
 @Getter
 @Setter
 public abstract class SearchModule {
@@ -11,17 +13,56 @@ public abstract class SearchModule {
     private final String name;
     private boolean toggled = false;
 
+    protected final Map<String, Map<String, String>> idToOptionsMap = new HashMap<>();
+
     public SearchModule(String name) {
         this.name = name;
     }
 
-    public abstract Object processChunk(Chunk chunk);
+    public Object processChunk(Chunk chunk) {
+        return null;
+    }
 
 
     public void toggle() {
         this.toggled = !toggled;
     }
 
-    public void options(String[] options) {
+    public void options(String[] args) {
+        if (getValidOptions() == null || getValidOptions().isEmpty()) {
+            return;
+        }
+
+        for (String arg : args) {
+            String[] options = arg.split(",");
+            Map<String, String> optionsMap = getOptionsMap(options);
+
+            String id = optionsMap.get("id");
+            if (id == null) {
+                throw new NoSuchElementException("Missing 'id' argument.");
+            }
+            idToOptionsMap.put(id, optionsMap);
+        }
+    }
+
+    private Map<String, String> getOptionsMap(String[] options) {
+        Map<String, String> optionsMap = new HashMap<>();
+        for (String option : options) {
+            String[] pair = option.split("=");
+            String key = pair[0];
+            String val = pair[1];
+
+            if (!getValidOptions().contains(key)) {
+                throw new IllegalArgumentException(
+                        key + " is not a valid argument. Choose between: " + getValidOptions()
+                );
+            }
+            optionsMap.put(key, val);
+        }
+        return optionsMap;
+    }
+
+    public List<String> getValidOptions() {
+        return null;
     }
 }

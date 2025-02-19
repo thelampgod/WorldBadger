@@ -30,12 +30,6 @@ public class SignModule extends BlockEntitySearchModule {
         return signs.isEmpty() ? null : signs;
     }
 
-    @Override
-    public Object processChunk(Chunk chunk) {
-        return null; // no op
-    }
-
-
     @RequiredArgsConstructor
     @Data
     public static class SignData {

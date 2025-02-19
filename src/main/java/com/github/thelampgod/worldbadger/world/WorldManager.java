@@ -34,5 +34,18 @@ public class WorldManager {
                         region.unload();
                     }
                 });
+
+        world.getEntities().parallelStream()
+                .forEach(region -> {
+                    try {
+                        region.load();
+                        region.forEach(chunk -> main.getModuleManager().processEntities(chunk));
+
+                    } catch (IOException e) {
+                        main.logger.error("Failed to load region {}", region.getName());
+                    } finally {
+                        region.unload();
+                    }
+                });
     }
 }

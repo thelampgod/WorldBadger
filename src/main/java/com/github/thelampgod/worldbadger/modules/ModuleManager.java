@@ -1,6 +1,7 @@
 package com.github.thelampgod.worldbadger.modules;
 
 import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
+import com.github.thelampgod.worldbadger.modules.impl.EntitiesModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
@@ -11,11 +12,12 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ModuleManager {
-    private Set<SearchModule> modules = new HashSet<>();
+    private final Set<SearchModule> modules = new HashSet<>();
 
     public ModuleManager() {
         modules.add(new SignModule());
         modules.add(new BlockModule());
+        modules.add(new EntitiesModule());
     }
 
     public Optional<SearchModule> findModule(String name) {
@@ -49,6 +51,22 @@ public class ModuleManager {
             if (ret == null) return;
             System.out.println(ret);
         });
+    }
 
+    public void processEntities(Chunk chunk) {
+        if (chunk == null) return;
+        getEnabledModules().stream()
+                .filter(EntitySearchModule.class::isInstance)
+                .map(EntitySearchModule.class::cast)
+                .forEach(module -> {
+                    List<CompoundTag> entities = chunk.getData().getList("Entities").stream()
+                            .map(CompoundTag.class::cast)
+                            .toList();
+
+                    var ret = module.processEntities(entities);
+
+                    if (ret == null) return;
+                    System.out.println(ret);
+                });
     }
 }
