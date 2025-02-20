@@ -39,7 +39,11 @@ public abstract class SearchModule {
 
             String id = optionsMap.get("id");
             if (id == null) {
-                throw new NoSuchElementException("Missing 'id' argument.");
+                if (requiresId()) {
+                    throw new NoSuchElementException("Missing 'id' argument.");
+                }
+
+                id = "all";
             }
             idToOptionsMap.put(id, optionsMap);
         }
@@ -64,5 +68,9 @@ public abstract class SearchModule {
 
     public List<String> getValidOptions() {
         return null;
+    }
+
+    public boolean requiresId() {
+        return true;
     }
 }
