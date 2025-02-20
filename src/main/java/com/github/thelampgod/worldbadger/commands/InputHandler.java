@@ -34,6 +34,7 @@ public class InputHandler {
                 main.logger.error("{}: command not found.", commandName);
             } catch (Exception e) {
                 main.logger.error(e.getMessage());
+                e.printStackTrace();
             } finally {
                 System.out.print("> ");
             }

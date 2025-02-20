@@ -1,6 +1,7 @@
 package com.github.thelampgod.worldbadger.world;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
+import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -20,32 +21,40 @@ public class WorldManager {
         return world;
     }
 
-    //TODO: check enabled modules of which type of region is being searched (dont need to load "entities" regions for a sign search)
     public void startSearch() {
-        world.getRegions().parallelStream()
-                .forEach(region -> {
-                    try {
-                        region.load();
-                        region.forEach(chunk -> main.getModuleManager().processChunk(chunk));
+        boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()
+                .anyMatch(module -> !(module instanceof EntitySearchModule));
+        if (shouldSearchRegions) {
+            world.getRegions().parallelStream()
+                    .forEach(region -> {
+                        try {
+                            region.load();
+                            region.forEach(chunk -> main.getModuleManager().processChunk(chunk));
 
-                    } catch (IOException e) {
-                        main.logger.error("Failed to load region {}", region.getName());
-                    } finally {
-                        region.unload();
-                    }
-                });
+                        } catch (IOException e) {
+                            main.logger.error("Failed to load region {}", region.getName());
+                        } finally {
+                            region.unload();
+                        }
+                    });
+        }
 
-        world.getEntities().parallelStream()
-                .forEach(region -> {
-                    try {
-                        region.load();
-                        region.forEach(chunk -> main.getModuleManager().processEntities(chunk));
+        boolean shouldSearchEntities = main.getModuleManager().getEnabledModules().stream()
+                .anyMatch(module -> (module instanceof EntitySearchModule));
 
-                    } catch (IOException e) {
-                        main.logger.error("Failed to load region {}", region.getName());
-                    } finally {
-                        region.unload();
-                    }
-                });
+        if (shouldSearchEntities) {
+            world.getEntities().parallelStream()
+                    .forEach(region -> {
+                        try {
+                            region.load();
+                            region.forEach(chunk -> main.getModuleManager().processEntities(chunk));
+
+                        } catch (IOException e) {
+                            main.logger.error("Failed to load region {}", region.getName());
+                        } finally {
+                            region.unload();
+                        }
+                    });
+        }
     }
 }

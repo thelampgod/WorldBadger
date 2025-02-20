@@ -18,7 +18,7 @@ public class EntitiesModule extends EntitySearchModule {
     @Override
     public Object processEntities(List<CompoundTag> entities) {
         List<String> foundEntities = new ArrayList<>();
-        boolean all = idToOptionsMap.containsKey("all");
+        boolean all = idToOptionsMap.isEmpty() || idToOptionsMap.containsKey("all");
         for (CompoundTag tag : entities) {
             String id = tag.getString("id");
             if (!all) {
@@ -26,8 +26,8 @@ public class EntitiesModule extends EntitySearchModule {
             }
 
             Map<String, String> options = idToOptionsMap.get(all ? "all" : id);
-            int minY = options.containsKey("min") ? Integer.parseInt(options.get("min")) : Integer.MIN_VALUE;
-            int maxY = options.containsKey("max") ? Integer.parseInt(options.get("max")) : Integer.MAX_VALUE;
+            int minY = options != null && options.containsKey("min") ? Integer.parseInt(options.get("min")) : Integer.MIN_VALUE;
+            int maxY = options != null && options.containsKey("max") ? Integer.parseInt(options.get("max")) : Integer.MAX_VALUE;
 
             var pos = tag.getList("Pos");
             double x = pos.getDouble(0);

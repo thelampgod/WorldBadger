@@ -33,6 +33,10 @@ public abstract class SearchModule {
             return;
         }
 
+        if (requiresId() && (args == null || args.length == 0)) {
+            throw new NoSuchElementException("Missing 'id' argument.");
+        }
+
         for (String arg : args) {
             String[] options = arg.split(",");
             Map<String, String> optionsMap = getOptionsMap(options);
