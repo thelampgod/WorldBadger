@@ -3,9 +3,9 @@ package com.github.thelampgod.worldbadger.commands.impl;
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.Command;
 
-public class SetOutputCommand extends Command {
+public class SetOutputFolderCommand extends Command {
 
-    public SetOutputCommand(WorldBadger main) {
+    public SetOutputFolderCommand(WorldBadger main) {
         super(main);
     }
 

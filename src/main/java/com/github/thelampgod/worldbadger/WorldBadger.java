@@ -9,6 +9,7 @@ import com.github.thelampgod.worldbadger.output.impl.CsvOutput;
 import com.github.thelampgod.worldbadger.output.OutputMode;
 import com.github.thelampgod.worldbadger.world.WorldManager;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +22,7 @@ public class WorldBadger {
     private WorldManager worldManager;
     private ModuleManager moduleManager;
     private Database database;
+    @Setter
     private OutputMode outputMode;
 
     private InputHandler inputHandler;

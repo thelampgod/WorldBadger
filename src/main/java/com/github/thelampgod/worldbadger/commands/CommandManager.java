@@ -17,8 +17,9 @@ public class CommandManager {
         put("add", new AddModuleCommand(main));
         put("run", new RunCommand(main));
         put("world", new SetInputCommand(main));
-        put("output", new SetOutputCommand(main));
+        put("outputfolder", new SetOutputFolderCommand(main));
         put("commands", new CommandsCommand(main));
+        put("outputmode", new SetOutputModeCommand(main));
     }
 
     private void put(String name, Command instance) {
