@@ -4,6 +4,7 @@ import com.github.thelampgod.worldbadger.commands.CommandManager;
 import com.github.thelampgod.worldbadger.commands.InputHandler;
 import com.github.thelampgod.worldbadger.database.Database;
 import com.github.thelampgod.worldbadger.modules.ModuleManager;
+import com.github.thelampgod.worldbadger.output.impl.ConsoleOutput;
 import com.github.thelampgod.worldbadger.output.impl.CsvOutput;
 import com.github.thelampgod.worldbadger.output.OutputMode;
 import com.github.thelampgod.worldbadger.world.WorldManager;
@@ -35,7 +36,7 @@ public class WorldBadger {
     private void init(WorldBadger instance) {
         this.commandManager = new CommandManager(instance);
         this.worldManager = new WorldManager(instance);
-        this.outputMode = new CsvOutput();
+        this.outputMode = new ConsoleOutput();
         this.moduleManager = new ModuleManager(this.outputMode);
         this.inputHandler = new InputHandler(instance);
         this.database = new Database(instance, "jdbc:sqlite:./worldbadger.db");
