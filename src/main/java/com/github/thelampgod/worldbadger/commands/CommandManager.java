@@ -1,10 +1,7 @@
 package com.github.thelampgod.worldbadger.commands;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
-import com.github.thelampgod.worldbadger.commands.impl.AddModuleCommand;
-import com.github.thelampgod.worldbadger.commands.impl.RunCommand;
-import com.github.thelampgod.worldbadger.commands.impl.SetInputCommand;
-import com.github.thelampgod.worldbadger.commands.impl.SetOutputCommand;
+import com.github.thelampgod.worldbadger.commands.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +18,7 @@ public class CommandManager {
         put("run", new RunCommand(main));
         put("world", new SetInputCommand(main));
         put("output", new SetOutputCommand(main));
+        put("commands", new CommandsCommand(main));
     }
 
     private void put(String name, Command instance) {
@@ -32,5 +30,13 @@ public class CommandManager {
 
         if (command == null) throw new CommandNotFoundException();
         return command;
+    }
+
+    public String getCommandsFormatted() {
+        StringBuilder builder = new StringBuilder("Commands:\n");
+        commandsMap.forEach((name, command) -> {
+            builder.append("> ").append(name).append(": ").append(command.description()).append("\n");
+        });
+        return builder.toString();
     }
 }
