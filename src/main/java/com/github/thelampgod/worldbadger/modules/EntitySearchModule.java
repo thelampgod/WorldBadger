@@ -11,5 +11,5 @@ public abstract class EntitySearchModule extends SearchModule {
         super(name);
     }
 
-    public abstract Object processEntities(List<CompoundTag> entities);
+    public abstract List<?> processEntities(List<CompoundTag> entities);
 }

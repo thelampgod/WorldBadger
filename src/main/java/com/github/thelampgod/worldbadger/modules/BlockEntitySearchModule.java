@@ -10,5 +10,5 @@ public abstract class BlockEntitySearchModule extends SearchModule {
         super(name);
     }
 
-    public abstract Object processChunkBlockEntities(List<CompoundTag> blockEntities);
+    public abstract List<?> processChunkBlockEntities(List<CompoundTag> blockEntities);
 }

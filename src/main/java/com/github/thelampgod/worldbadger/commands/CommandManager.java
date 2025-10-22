@@ -4,6 +4,7 @@ import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.impl.AddModuleCommand;
 import com.github.thelampgod.worldbadger.commands.impl.RunCommand;
 import com.github.thelampgod.worldbadger.commands.impl.SetInputCommand;
+import com.github.thelampgod.worldbadger.commands.impl.SetOutputCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class CommandManager {
         put("add", new AddModuleCommand(main));
         put("run", new RunCommand(main));
         put("world", new SetInputCommand(main));
+        put("output", new SetOutputCommand(main));
     }
 
     private void put(String name, Command instance) {

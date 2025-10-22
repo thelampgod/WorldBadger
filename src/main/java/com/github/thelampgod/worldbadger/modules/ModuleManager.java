@@ -3,6 +3,7 @@ package com.github.thelampgod.worldbadger.modules;
 import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
 import com.github.thelampgod.worldbadger.modules.impl.EntitiesModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
+import com.github.thelampgod.worldbadger.output.OutputMode;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
@@ -14,7 +15,9 @@ import java.util.Set;
 public class ModuleManager {
     private final Set<SearchModule> modules = new HashSet<>();
 
-    public ModuleManager() {
+    private final OutputMode outputMode;
+    public ModuleManager(OutputMode outputMode) {
+        this.outputMode = outputMode;
         modules.add(new SignModule());
         modules.add(new BlockModule());
         modules.add(new EntitiesModule());
@@ -42,14 +45,12 @@ public class ModuleManager {
 
                 var ret = mod.processChunkBlockEntities(blockEntities);
 
-                if (ret == null) return;
-                System.out.println(ret);
+                outputMode.processChunkResult(mod.getName(), ret);
                 return;
             }
 
             var ret = module.processChunk(chunk);
-            if (ret == null) return;
-            System.out.println(ret);
+            outputMode.processChunkResult(module.getName(), ret);
         });
     }
 
@@ -64,9 +65,7 @@ public class ModuleManager {
                             .toList();
 
                     var ret = module.processEntities(entities);
-
-                    if (ret == null) return;
-                    System.out.println(ret);
+                    outputMode.processChunkResult(module.getName(), ret);
                 });
     }
 }

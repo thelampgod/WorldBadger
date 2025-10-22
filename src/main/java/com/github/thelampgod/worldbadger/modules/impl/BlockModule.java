@@ -1,6 +1,8 @@
 package com.github.thelampgod.worldbadger.modules.impl;
 
 import com.github.thelampgod.worldbadger.modules.SearchModule;
+import com.github.thelampgod.worldbadger.output.DataClass;
+import lombok.Data;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
@@ -14,8 +16,8 @@ public class BlockModule extends SearchModule {
     }
 
     @Override
-    public Object processChunk(Chunk chunk) {
-        List<String> foundBlocks = new ArrayList<>();
+    public List<?> processChunk(Chunk chunk) {
+        List<BlockData> foundBlocks = new ArrayList<>();
         var list = chunk.getData().getList("sections");
 
         int chunkX = chunk.getX();
@@ -29,11 +31,30 @@ public class BlockModule extends SearchModule {
             foundBlocks.addAll(processSection(chunkX, chunkZ, ySection, section));
         }
 
-        return foundBlocks.isEmpty() ? null : foundBlocks;
+        return foundBlocks;
     }
 
-    private List<String> processSection(int chunkX, int chunkZ, int ySection, CompoundTag section) {
-        List<String> foundBlocks = new ArrayList<>();
+    @Data
+    private static class BlockData implements DataClass {
+        private final int x;
+        private final int y;
+        private final int z;
+
+        private final String blockId;
+
+        @Override
+        public List<String> getFieldNames() {
+            return List.of("x", "y", "z", "blockId");
+        }
+
+        @Override
+        public List<Object> getFieldValues() {
+            return List.of(x, y, z, blockId);
+        }
+    }
+
+    private List<BlockData> processSection(int chunkX, int chunkZ, int ySection, CompoundTag section) {
+        List<BlockData> foundBlocks = new ArrayList<>();
 
         CompoundTag blockStates = section.getCompound("block_states");
         ListTag palette = blockStates.getList("palette");
@@ -64,8 +85,8 @@ public class BlockModule extends SearchModule {
         return indices;
     }
 
-    private List<String> processUniformSection(int chunkX, int chunkZ, int ySection, ListTag palette) {
-        List<String> foundBlocks = new ArrayList<>();
+    private List<BlockData> processUniformSection(int chunkX, int chunkZ, int ySection, ListTag palette) {
+        List<BlockData> foundBlocks = new ArrayList<>();
         String blockId = ((CompoundTag) palette.get(0)).getString("Name");
 
         if (!idToOptionsMap.containsKey(blockId)) return foundBlocks;
@@ -84,14 +105,14 @@ public class BlockModule extends SearchModule {
             int absoluteY = ySection | y;
 
             if (absoluteY >= minY && absoluteY <= maxY) {
-                foundBlocks.add(String.format("%d,%d,%d,%s", absoluteX, absoluteY, absoluteZ, blockId));
+                foundBlocks.add(new BlockData(absoluteX, absoluteY, absoluteZ, blockId));
             }
         }
         return foundBlocks;
     }
 
-    private List<String> processDataArray(int chunkX, int chunkZ, int ySection, CompoundTag section, ListTag palette, Set<Integer> relevantPaletteIndices) {
-        List<String> foundBlocks = new ArrayList<>();
+    private List<BlockData> processDataArray(int chunkX, int chunkZ, int ySection, CompoundTag section, ListTag palette, Set<Integer> relevantPaletteIndices) {
+        List<BlockData> foundBlocks = new ArrayList<>();
         long[] dataArray = section.getCompound("block_states").getLongArray("data");
 
         int bitsPerBlock = Math.max(4, (int) Math.ceil(Math.log(palette.size()) / Math.log(2)));
@@ -117,7 +138,7 @@ public class BlockModule extends SearchModule {
             int maxY = options.containsKey("max") ? Integer.parseInt(options.get("max")) : Integer.MAX_VALUE;
             if (absoluteY < minY || absoluteY > maxY) continue;
 
-            foundBlocks.add(String.format("%d,%d,%d,%s", absoluteX, absoluteY, absoluteZ, blockId));
+            foundBlocks.add(new BlockData(absoluteX, absoluteY, absoluteZ, blockId));
         }
         return foundBlocks;
     }

@@ -19,8 +19,8 @@ public abstract class SearchModule {
         this.name = name;
     }
 
-    public Object processChunk(Chunk chunk) {
-        return null;
+    public List<?> processChunk(Chunk chunk) {
+        return List.of();
     }
 
 
