@@ -34,7 +34,7 @@ public class CsvOutput implements OutputMode {
     }
 
     @Override
-    public void processChunkResult(String moduleName, List<?> results) {
+    public void processChunkResult(String moduleName, List<?> results) throws IOException, RuntimeException {
         if (results == null || results.isEmpty()) return;
         AtomicBoolean shouldWriteHeaders = new AtomicBoolean(false);
 
@@ -64,7 +64,7 @@ public class CsvOutput implements OutputMode {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to write CSV for " + moduleName, e);
+            throw new IOException("Failed to write CSV for " + moduleName, e);
         }
     }
 

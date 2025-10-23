@@ -2,6 +2,7 @@ package com.github.thelampgod.worldbadger.output.impl;
 
 import com.github.thelampgod.worldbadger.output.OutputMode;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class DatabaseOutput implements OutputMode {
     }
 
     @Override
-    public void processChunkResult(String moduleName, List<?> results) {
+    public void processChunkResult(String moduleName, List<?> results) throws IOException, RuntimeException {
 
     }
 

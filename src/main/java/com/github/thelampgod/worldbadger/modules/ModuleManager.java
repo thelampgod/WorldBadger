@@ -7,6 +7,7 @@ import com.github.thelampgod.worldbadger.modules.impl.SignModule;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class ModuleManager {
     private final Set<SearchModule> modules = new HashSet<>();
 
     private final WorldBadger instance;
+
     public ModuleManager(WorldBadger instance) {
         this.instance = instance;
         modules.add(new SignModule());
@@ -44,13 +46,20 @@ public class ModuleManager {
                         .toList();
 
                 var ret = mod.processChunkBlockEntities(blockEntities);
-
-                instance.getOutputMode().processChunkResult(mod.getName(), ret);
+                try {
+                    instance.getOutputMode().processChunkResult(mod.getName(), ret);
+                } catch (IOException e) {
+                    instance.logger.error(e.getMessage(), e);
+                }
                 return;
             }
 
             var ret = module.processChunk(chunk);
-            instance.getOutputMode().processChunkResult(module.getName(), ret);
+            try {
+                instance.getOutputMode().processChunkResult(module.getName(), ret);
+            } catch (IOException e) {
+                instance.logger.error(e.getMessage(), e);
+            }
         });
     }
 
@@ -65,7 +74,11 @@ public class ModuleManager {
                             .toList();
 
                     var ret = module.processEntities(entities);
-                    instance.getOutputMode().processChunkResult(module.getName(), ret);
+                    try {
+                        instance.getOutputMode().processChunkResult(module.getName(), ret);
+                    } catch (IOException e) {
+                        instance.logger.error(e.getMessage(), e);
+                    }
                 });
     }
 }

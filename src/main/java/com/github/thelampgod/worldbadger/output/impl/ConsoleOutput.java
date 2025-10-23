@@ -4,6 +4,7 @@ import com.github.thelampgod.worldbadger.output.DataClass;
 import com.github.thelampgod.worldbadger.output.OutputMode;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ConsoleOutput implements OutputMode {
     }
 
     @Override
-    public void processChunkResult(String moduleName, List<?> results) {
+    public void processChunkResult(String moduleName, List<?> results) throws IOException, RuntimeException {
         for (Object result : results) {
             if (result instanceof DataClass data) {
                 StringBuilder builder = new StringBuilder();

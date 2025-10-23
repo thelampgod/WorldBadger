@@ -34,7 +34,7 @@ public class RunCommand extends Command {
         try {
             main.getWorldManager().startSearch();
         } catch (Exception e) {
-            main.logger.error("Couldn't run search: {}", e.getMessage());
+            main.logger.error("Error in search: {}", e.getMessage(), e);
         }
         main.logger.info("Done!");
     }
