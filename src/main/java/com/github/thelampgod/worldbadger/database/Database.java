@@ -31,16 +31,6 @@ public class Database {
         }
     }
 
-    private BasicDataSource connect(String url) {
-        final BasicDataSource db = new BasicDataSource();
-        db.setDriverClassName("org.sqlite.JDBC");
-        db.setUrl(url);
-        db.setInitialSize(1);
-
-        logger.info("Connected to database.");
-        return db;
-    }
-
     public void close() throws SQLException {
         if (connection != null) {
             connection.close();
@@ -136,8 +126,6 @@ public class Database {
                         .collect(Collectors.toList())),
                 placeholders
         );
-
-        logger.info("exec: " + sql);
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             for (DataClass data : dataList) {

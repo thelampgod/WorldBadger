@@ -47,7 +47,7 @@ public class DatabaseOutput implements OutputMode {
     @Override
     public void close() {
         try {
-            database.getConnection().close();
+            database.close();
         } catch (SQLException e) {
             System.err.println("Failed to close database connection: " + e.getMessage());
         }

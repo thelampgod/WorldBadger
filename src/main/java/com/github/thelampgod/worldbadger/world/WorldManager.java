@@ -30,6 +30,7 @@ public class WorldManager {
 
     public void startSearch() throws Exception {
         main.getOutputMode().initialize(this.outputFolder);
+        long start = System.currentTimeMillis();
         boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()
                 .anyMatch(module -> !(module instanceof EntitySearchModule));
         if (shouldSearchRegions) {
@@ -65,6 +66,7 @@ public class WorldManager {
                     });
         }
 
+        main.logger.info("Search finished in {}ms", System.currentTimeMillis() - start);
         main.getOutputMode().close();
     }
 }
