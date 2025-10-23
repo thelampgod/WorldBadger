@@ -18,6 +18,9 @@ public class WorldBadger {
 
     public Logger logger = LogManager.getLogger(this.getClass());
 
+    @Setter
+    private boolean running = true;
+
     private CommandManager commandManager;
     private WorldManager worldManager;
     private ModuleManager moduleManager;

@@ -20,6 +20,7 @@ public class CommandManager {
         put("outputfolder", new SetOutputFolderCommand(main));
         put("commands", new CommandsCommand(main));
         put("outputmode", new SetOutputModeCommand(main));
+        put("exit", new ExitCommand(main));
     }
 
     private void put(String name, Command instance) {
