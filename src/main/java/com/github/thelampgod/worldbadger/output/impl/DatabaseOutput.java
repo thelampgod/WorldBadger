@@ -51,5 +51,6 @@ public class DatabaseOutput implements OutputMode {
         } catch (SQLException e) {
             System.err.println("Failed to close database connection: " + e.getMessage());
         }
+        tablesCreated.clear();
     }
 }
