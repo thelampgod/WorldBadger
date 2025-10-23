@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EntitiesModule extends EntitySearchModule {
+public class EntityModule extends EntitySearchModule {
     private static final SNBTWriter nbt = new SNBTWriter();
 
-    public EntitiesModule() {
-        super("entities");
+    public EntityModule() {
+        super("entity");
     }
 
     @Override
