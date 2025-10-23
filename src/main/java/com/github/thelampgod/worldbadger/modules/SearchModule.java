@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.output.DataClass;
 import lombok.Getter;
 import lombok.Setter;
 import net.querz.mca.Chunk;
@@ -19,7 +20,7 @@ public abstract class SearchModule {
         this.name = name;
     }
 
-    public List<?> processChunk(Chunk chunk) {
+    public List<? extends DataClass> processChunk(Chunk chunk) {
         return List.of();
     }
 

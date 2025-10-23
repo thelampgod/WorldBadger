@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.output.DataClass;
 import net.querz.nbt.CompoundTag;
 
 import java.util.List;
@@ -11,5 +12,5 @@ public abstract class EntitySearchModule extends SearchModule {
         super(name);
     }
 
-    public abstract List<?> processEntities(List<CompoundTag> entities);
+    public abstract List<? extends DataClass> processEntities(List<CompoundTag> entities);
 }

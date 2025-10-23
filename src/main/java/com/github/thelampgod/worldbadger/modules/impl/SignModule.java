@@ -15,7 +15,7 @@ public class SignModule extends BlockEntitySearchModule {
     }
 
     @Override
-    public List<?> processChunkBlockEntities(List<CompoundTag> blockEntities) {
+    public List<? extends DataClass> processChunkBlockEntities(List<CompoundTag> blockEntities) {
         List<SignData> signs = new ArrayList<>();
 
         blockEntities.stream()

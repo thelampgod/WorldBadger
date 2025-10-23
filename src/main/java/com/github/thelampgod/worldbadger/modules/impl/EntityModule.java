@@ -18,7 +18,7 @@ public class EntityModule extends EntitySearchModule {
     }
 
     @Override
-    public List<?> processEntities(List<CompoundTag> entities) {
+    public List<? extends DataClass> processEntities(List<CompoundTag> entities) {
         List<EntityData> foundEntities = new ArrayList<>();
         boolean all = idToOptionsMap.isEmpty() || idToOptionsMap.containsKey("all");
         for (CompoundTag tag : entities) {

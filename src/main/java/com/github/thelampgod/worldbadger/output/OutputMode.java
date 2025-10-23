@@ -8,7 +8,7 @@ public interface OutputMode {
     // Create resultfolder, result files, or database tables for database impl
     void initialize(Path outputFolder) throws Exception;
 
-    void processChunkResult(String moduleName, List<?> results);
+    void processChunkResult(String moduleName, List<? extends DataClass> results);
 
     void close();
 }

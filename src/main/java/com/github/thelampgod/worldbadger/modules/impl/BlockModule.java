@@ -16,7 +16,7 @@ public class BlockModule extends SearchModule {
     }
 
     @Override
-    public List<?> processChunk(Chunk chunk) {
+    public List<? extends DataClass> processChunk(Chunk chunk) {
         List<BlockData> foundBlocks = new ArrayList<>();
         var list = chunk.getData().getList("sections");
 

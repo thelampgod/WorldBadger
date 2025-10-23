@@ -24,7 +24,6 @@ public class WorldBadger {
     private CommandManager commandManager;
     private WorldManager worldManager;
     private ModuleManager moduleManager;
-    private Database database;
     @Setter
     private OutputMode outputMode;
 
@@ -44,7 +43,5 @@ public class WorldBadger {
         this.outputMode = new ConsoleOutput();
         this.moduleManager = new ModuleManager(instance);
         this.inputHandler = new InputHandler(instance);
-        this.database = new Database(instance, "jdbc:sqlite:./worldbadger.db");
-        this.database.applySchema();
     }
 }

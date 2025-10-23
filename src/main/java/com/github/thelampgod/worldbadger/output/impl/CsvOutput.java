@@ -31,7 +31,7 @@ public class CsvOutput implements OutputMode {
     }
 
     @Override
-    public void processChunkResult(String moduleName, List<?> results) {
+    public void processChunkResult(String moduleName, List<? extends DataClass> results) {
         if (results == null || results.isEmpty()) return;
 
         PrintWriter writer = moduleToWriterMap.computeIfAbsent(moduleName, name -> {
@@ -46,19 +46,17 @@ public class CsvOutput implements OutputMode {
         // Check if we need to write headers for this module
         boolean writeHeaders = !headersWritten.contains(moduleName);
 
-        for (Object result : results) {
-            if (result instanceof DataClass data) {
-                if (writeHeaders) {
-                    writer.println(String.join(",", data.getFieldNames()));
-                    headersWritten.add(moduleName);
-                    writeHeaders = false;
-                }
-
-                String row = data.getFieldValues().stream()
-                        .map(csvFormatHelper::formatCsvValue)
-                        .collect(Collectors.joining(","));
-                writer.println(row);
+        for (DataClass data : results) {
+            if (writeHeaders) {
+                writer.println(String.join(",", data.getFieldNames()));
+                headersWritten.add(moduleName);
+                writeHeaders = false;
             }
+
+            String row = data.getFieldValues().stream()
+                    .map(csvFormatHelper::formatCsvValue)
+                    .collect(Collectors.joining(","));
+            writer.println(row);
         }
     }
 
