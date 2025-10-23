@@ -1,9 +1,9 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
 import com.github.thelampgod.worldbadger.modules.impl.EntitiesModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
-import com.github.thelampgod.worldbadger.output.OutputMode;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
@@ -15,9 +15,9 @@ import java.util.Set;
 public class ModuleManager {
     private final Set<SearchModule> modules = new HashSet<>();
 
-    private final OutputMode outputMode;
-    public ModuleManager(OutputMode outputMode) {
-        this.outputMode = outputMode;
+    private final WorldBadger instance;
+    public ModuleManager(WorldBadger instance) {
+        this.instance = instance;
         modules.add(new SignModule());
         modules.add(new BlockModule());
         modules.add(new EntitiesModule());
@@ -45,12 +45,12 @@ public class ModuleManager {
 
                 var ret = mod.processChunkBlockEntities(blockEntities);
 
-                outputMode.processChunkResult(mod.getName(), ret);
+                instance.getOutputMode().processChunkResult(mod.getName(), ret);
                 return;
             }
 
             var ret = module.processChunk(chunk);
-            outputMode.processChunkResult(module.getName(), ret);
+            instance.getOutputMode().processChunkResult(module.getName(), ret);
         });
     }
 
@@ -65,7 +65,7 @@ public class ModuleManager {
                             .toList();
 
                     var ret = module.processEntities(entities);
-                    outputMode.processChunkResult(module.getName(), ret);
+                    instance.getOutputMode().processChunkResult(module.getName(), ret);
                 });
     }
 }

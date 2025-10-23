@@ -31,7 +31,11 @@ public class RunCommand extends Command {
             main.logger.info(moduleName);
         }
 
-        main.getWorldManager().startSearch();
+        try {
+            main.getWorldManager().startSearch();
+        } catch (Exception e) {
+            main.logger.error("Couldn't run search: {}", e.getMessage());
+        }
         main.logger.info("Done!");
     }
 

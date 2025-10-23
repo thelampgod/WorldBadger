@@ -39,7 +39,7 @@ public class WorldBadger {
         this.commandManager = new CommandManager(instance);
         this.worldManager = new WorldManager(instance);
         this.outputMode = new ConsoleOutput();
-        this.moduleManager = new ModuleManager(this.outputMode);
+        this.moduleManager = new ModuleManager(instance);
         this.inputHandler = new InputHandler(instance);
         this.database = new Database(instance, "jdbc:sqlite:./worldbadger.db");
         this.database.applySchema();

@@ -6,7 +6,7 @@ import java.util.List;
 public interface OutputMode {
 
     // Create resultfolder, result files, or database tables for database impl
-    void initialize(Path outputFolder);
+    void initialize(Path outputFolder) throws Exception;
 
     void processChunkResult(String moduleName, List<?> results);
 

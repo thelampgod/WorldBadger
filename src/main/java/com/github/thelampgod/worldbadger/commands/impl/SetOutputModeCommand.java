@@ -1,11 +1,12 @@
 package com.github.thelampgod.worldbadger.commands.impl;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
+import com.github.thelampgod.worldbadger.commands.Command;
 import com.github.thelampgod.worldbadger.output.impl.ConsoleOutput;
 import com.github.thelampgod.worldbadger.output.impl.CsvOutput;
 import com.github.thelampgod.worldbadger.output.impl.DatabaseOutput;
 
-public class SetOutputModeCommand extends CommandsCommand {
+public class SetOutputModeCommand extends Command {
     public SetOutputModeCommand(WorldBadger main) {
         super(main);
     }
@@ -16,8 +17,8 @@ public class SetOutputModeCommand extends CommandsCommand {
 
         switch (args[0].toUpperCase()) {
             case "CSV" -> {
-                main.logger.info("Set outputmode to CSV");
                 main.setOutputMode(new CsvOutput());
+                main.logger.info("Set outputmode to CSV");
             }
             case "DB" -> {
                 main.setOutputMode(new DatabaseOutput());

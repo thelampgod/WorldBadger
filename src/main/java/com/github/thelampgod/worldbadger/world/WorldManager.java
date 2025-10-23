@@ -13,7 +13,7 @@ public class WorldManager {
     @Getter
     private World world;
 
-    private Path outputFolder;
+    private Path outputFolder = Path.of("./output/");
 
     public WorldManager(WorldBadger instance) {
         this.main = instance;
@@ -24,17 +24,11 @@ public class WorldManager {
         return world;
     }
 
-    public void setOutputFolder(String output) throws Exception {
-        Path folder = Path.of(output);
-
-        if (folder.toFile().exists()) {
-            throw new Exception(output + " exists! Delete the folder or choose a different output.");
-        }
-
-        this.outputFolder = folder;
+    public void setOutputFolder(String output) {
+        this.outputFolder = Path.of(output);
     }
 
-    public void startSearch() {
+    public void startSearch() throws Exception {
         main.getOutputMode().initialize(this.outputFolder);
         boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()
                 .anyMatch(module -> !(module instanceof EntitySearchModule));
