@@ -7,7 +7,6 @@ import com.github.thelampgod.worldbadger.modules.impl.SignModule;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -46,20 +45,12 @@ public class ModuleManager {
                         .toList();
 
                 var ret = mod.processChunkBlockEntities(blockEntities);
-                try {
-                    instance.getOutputMode().processChunkResult(mod.getName(), ret);
-                } catch (IOException e) {
-                    instance.logger.error(e.getMessage(), e);
-                }
+                instance.getOutputMode().processChunkResult(mod.getName(), ret);
                 return;
             }
 
             var ret = module.processChunk(chunk);
-            try {
-                instance.getOutputMode().processChunkResult(module.getName(), ret);
-            } catch (IOException e) {
-                instance.logger.error(e.getMessage(), e);
-            }
+            instance.getOutputMode().processChunkResult(module.getName(), ret);
         });
     }
 
@@ -74,11 +65,7 @@ public class ModuleManager {
                             .toList();
 
                     var ret = module.processEntities(entities);
-                    try {
-                        instance.getOutputMode().processChunkResult(module.getName(), ret);
-                    } catch (IOException e) {
-                        instance.logger.error(e.getMessage(), e);
-                    }
+                    instance.getOutputMode().processChunkResult(module.getName(), ret);
                 });
     }
 }
