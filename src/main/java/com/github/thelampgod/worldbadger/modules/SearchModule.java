@@ -72,10 +72,12 @@ public abstract class SearchModule {
     }
 
     public List<String> getValidOptions() {
-        return null;
+        return List.of();
     }
 
     public boolean requiresId() {
         return true;
     }
+
+    public abstract String getDescription();
 }

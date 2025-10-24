@@ -17,6 +17,6 @@ public class CommandsCommand extends Command {
 
     @Override
     public String description() {
-        return "Prints command usage";
+        return "Prints command usage.";
     }
 }

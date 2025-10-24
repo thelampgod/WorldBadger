@@ -154,4 +154,9 @@ public class BlockModule extends SearchModule {
     public List<String> getValidOptions() {
         return List.of("id", "min", "max", "type");
     }
+
+    @Override
+    public String getDescription() {
+        return "Find all blocks matching. Usage: id=<id>,option=<option>.";
+    }
 }

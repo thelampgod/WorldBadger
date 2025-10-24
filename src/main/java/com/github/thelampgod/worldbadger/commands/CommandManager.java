@@ -21,6 +21,7 @@ public class CommandManager {
         put("commands", new CommandsCommand(main));
         put("outputmode", new SetOutputModeCommand(main));
         put("exit", new ExitCommand(main));
+        put("modules", new ModulesCommand(main));
     }
 
     private void put(String name, Command instance) {

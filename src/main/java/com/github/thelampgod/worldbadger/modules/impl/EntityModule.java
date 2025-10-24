@@ -73,4 +73,9 @@ public class EntityModule extends EntitySearchModule {
     public boolean requiresId() {
         return false;
     }
+
+    @Override
+    public String getDescription() {
+        return "Find all entities matching, with their data. Usage: id=<id>,option=<option>.";
+    }
 }

@@ -5,6 +5,7 @@ import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
 import com.github.thelampgod.worldbadger.modules.impl.EntityModule;
 import com.github.thelampgod.worldbadger.modules.impl.OldChunksModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
+import lombok.Getter;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ModuleManager {
+    @Getter
     private final Set<SearchModule> modules = new HashSet<>();
 
     private final WorldBadger instance;

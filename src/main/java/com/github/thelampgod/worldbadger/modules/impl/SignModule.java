@@ -66,4 +66,9 @@ public class SignModule extends BlockEntitySearchModule {
             return List.of(x, y, z, frontText, color, glowing);
         }
     }
+
+    @Override
+    public String getDescription() {
+        return "Find all signs in the world with their data.";
+    }
 }

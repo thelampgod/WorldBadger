@@ -33,7 +33,7 @@ public class SetOutputModeCommand extends Command {
 
     @Override
     public String description() {
-        return "Select between CSV, DB, CONSOLE";
+        return "Select between CSV, DB, CONSOLE.";
     }
 
     @Override

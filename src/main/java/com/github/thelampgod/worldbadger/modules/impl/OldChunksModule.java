@@ -104,4 +104,9 @@ public class OldChunksModule extends SearchModule {
             return List.of(x, z);
         }
     }
+
+    @Override
+    public String getDescription() {
+        return "Find all chunks generated before 1.8. Optionally return all chunks in the world with the oldchunk state attached.";
+    }
 }

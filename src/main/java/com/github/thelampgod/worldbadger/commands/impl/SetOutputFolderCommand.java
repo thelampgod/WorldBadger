@@ -25,7 +25,7 @@ public class SetOutputFolderCommand extends Command {
 
     @Override
     public String description() {
-        return "Sets the output folder to save results in";
+        return "Sets the output folder to save results in.";
     }
 
     @Override

@@ -41,7 +41,7 @@ public class RunCommand extends Command {
 
     @Override
     public String description() {
-        return "Starts the search";
+        return "Starts the search.";
     }
 
 
