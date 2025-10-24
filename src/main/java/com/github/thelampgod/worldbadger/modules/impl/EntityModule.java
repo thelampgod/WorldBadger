@@ -21,6 +21,7 @@ public class EntityModule extends EntitySearchModule {
     public List<? extends DataClass> processEntities(List<CompoundTag> entities) {
         List<EntityData> foundEntities = new ArrayList<>();
         boolean all = idToOptionsMap.isEmpty() || idToOptionsMap.containsKey("all");
+
         for (CompoundTag tag : entities) {
             String id = tag.getString("id");
             if (!all) {
@@ -30,6 +31,7 @@ public class EntityModule extends EntitySearchModule {
             Map<String, String> options = idToOptionsMap.get(all ? "all" : id);
             int minY = options != null && options.containsKey("min") ? Integer.parseInt(options.get("min")) : Integer.MIN_VALUE;
             int maxY = options != null && options.containsKey("max") ? Integer.parseInt(options.get("max")) : Integer.MAX_VALUE;
+            boolean printNbt = options != null && options.containsKey("nbt");
 
             var pos = tag.getList("Pos");
             double x = pos.getDouble(0);
@@ -37,7 +39,11 @@ public class EntityModule extends EntitySearchModule {
             double z = pos.getDouble(2);
 
             if (y >= minY && y <= maxY) {
-                foundEntities.add(new EntityData(x, y, z, id, nbt.toString(tag)));
+                if (printNbt) {
+                    foundEntities.add(new EntityData(x, y, z, id, nbt.toString(tag)));
+                } else {
+                    foundEntities.add(new EntityData(x, y, z, id, null));
+                }
             }
         }
 
@@ -66,7 +72,7 @@ public class EntityModule extends EntitySearchModule {
 
     @Override
     public List<String> getValidOptions() {
-        return List.of("id", "min", "max");
+        return List.of("id", "min", "max", "nbt");
     }
 
     @Override
@@ -76,6 +82,6 @@ public class EntityModule extends EntitySearchModule {
 
     @Override
     public String getDescription() {
-        return "Find all entities matching, with their data. Usage: id=<id>,option=<option>.";
+        return "Find all entities matching, optionally with their nbt data. Usage: id=<id>,option=<option>.";
     }
 }
