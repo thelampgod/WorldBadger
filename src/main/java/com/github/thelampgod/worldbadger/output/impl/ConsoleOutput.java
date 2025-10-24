@@ -18,6 +18,8 @@ public class ConsoleOutput implements OutputMode {
 
     @Override
     public void processChunkResult(String moduleName, List<? extends DataClass> results) {
+        if (results == null || results.isEmpty()) return;
+
         for (DataClass data : results) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < data.getFieldNames().size(); ++i) {

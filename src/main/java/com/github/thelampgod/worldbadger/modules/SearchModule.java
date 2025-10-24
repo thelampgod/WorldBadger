@@ -59,7 +59,7 @@ public abstract class SearchModule {
         for (String option : options) {
             String[] pair = option.split("=");
             String key = pair[0];
-            String val = pair[1];
+            String val = (pair.length > 1 ? pair[1] : "true");
 
             if (!getValidOptions().contains(key)) {
                 throw new IllegalArgumentException(

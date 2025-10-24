@@ -45,7 +45,7 @@ public class OldChunksModule extends SearchModule {
         }
 
         // if option "all", return a ChunkData result with state of chunk boolean
-        if (!idToOptionsMap.get("all").isEmpty()) {
+        if (idToOptionsMap.get("all") != null) {
             return List.of(new ChunkData(x, z, isNewerThan1_7));
         }
 
