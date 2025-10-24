@@ -1,6 +1,8 @@
 package com.github.thelampgod.worldbadger.modules.impl;
 
 import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
+import com.github.thelampgod.worldbadger.output.DataClass;
+import lombok.Data;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.io.snbt.SNBTWriter;
 
@@ -8,16 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EntitiesModule extends EntitySearchModule {
+public class EntityModule extends EntitySearchModule {
     private static final SNBTWriter nbt = new SNBTWriter();
 
-    public EntitiesModule() {
-        super("entities");
+    public EntityModule() {
+        super("entity");
     }
 
     @Override
-    public Object processEntities(List<CompoundTag> entities) {
-        List<String> foundEntities = new ArrayList<>();
+    public List<? extends DataClass> processEntities(List<CompoundTag> entities) {
+        List<EntityData> foundEntities = new ArrayList<>();
         boolean all = idToOptionsMap.isEmpty() || idToOptionsMap.containsKey("all");
         for (CompoundTag tag : entities) {
             String id = tag.getString("id");
@@ -35,11 +37,31 @@ public class EntitiesModule extends EntitySearchModule {
             double z = pos.getDouble(2);
 
             if (y >= minY && y <= maxY) {
-                foundEntities.add(String.format("%.3f,%.3f,%.3f,%s,%s", x, y, z, id, nbt.toString(tag)));
+                foundEntities.add(new EntityData(x, y, z, id, nbt.toString(tag)));
             }
         }
 
-        return foundEntities.isEmpty() ? null : foundEntities;
+        return foundEntities;
+    }
+
+    @Data
+    private static class EntityData implements DataClass {
+        private final double x;
+        private final double y;
+        private final double z;
+
+        private final String entityId;
+        private final String nbt;
+
+        @Override
+        public List<String> getFieldNames() {
+            return List.of("x", "y", "z", "entityId", "nbt");
+        }
+
+        @Override
+        public List<Object> getFieldValues() {
+            return List.of(x, y, z, entityId, nbt);
+        }
     }
 
     @Override
@@ -50,5 +72,10 @@ public class EntitiesModule extends EntitySearchModule {
     @Override
     public boolean requiresId() {
         return false;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Find all entities matching, with their data. Usage: id=<id>,option=<option>.";
     }
 }

@@ -5,12 +5,15 @@ import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class WorldManager {
     private final WorldBadger main;
 
     @Getter
     private World world;
+
+    private Path outputFolder = Path.of("./output/");
 
     public WorldManager(WorldBadger instance) {
         this.main = instance;
@@ -21,7 +24,13 @@ public class WorldManager {
         return world;
     }
 
-    public void startSearch() {
+    public void setOutputFolder(String output) {
+        this.outputFolder = Path.of(output);
+    }
+
+    public void startSearch() throws Exception {
+        main.getOutputMode().initialize(this.outputFolder);
+        long start = System.currentTimeMillis();
         boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()
                 .anyMatch(module -> !(module instanceof EntitySearchModule));
         if (shouldSearchRegions) {
@@ -56,5 +65,8 @@ public class WorldManager {
                         }
                     });
         }
+
+        main.logger.info("Search finished in {}ms", System.currentTimeMillis() - start);
+        main.getOutputMode().close();
     }
 }

@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.output.DataClass;
 import net.querz.nbt.CompoundTag;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public abstract class BlockEntitySearchModule extends SearchModule {
         super(name);
     }
 
-    public abstract Object processChunkBlockEntities(List<CompoundTag> blockEntities);
+    public abstract List<? extends DataClass> processChunkBlockEntities(List<CompoundTag> blockEntities);
 }

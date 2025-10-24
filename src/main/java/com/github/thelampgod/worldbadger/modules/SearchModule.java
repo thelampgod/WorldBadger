@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.output.DataClass;
 import lombok.Getter;
 import lombok.Setter;
 import net.querz.mca.Chunk;
@@ -19,8 +20,8 @@ public abstract class SearchModule {
         this.name = name;
     }
 
-    public Object processChunk(Chunk chunk) {
-        return null;
+    public List<? extends DataClass> processChunk(Chunk chunk) {
+        return List.of();
     }
 
 
@@ -58,7 +59,7 @@ public abstract class SearchModule {
         for (String option : options) {
             String[] pair = option.split("=");
             String key = pair[0];
-            String val = pair[1];
+            String val = (pair.length > 1 ? pair[1] : "true");
 
             if (!getValidOptions().contains(key)) {
                 throw new IllegalArgumentException(
@@ -71,10 +72,12 @@ public abstract class SearchModule {
     }
 
     public List<String> getValidOptions() {
-        return null;
+        return List.of();
     }
 
     public boolean requiresId() {
         return true;
     }
+
+    public abstract String getDescription();
 }

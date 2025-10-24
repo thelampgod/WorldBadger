@@ -1,14 +1,12 @@
 package com.github.thelampgod.worldbadger.modules.impl;
 
 import com.github.thelampgod.worldbadger.modules.BlockEntitySearchModule;
+import com.github.thelampgod.worldbadger.output.DataClass;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SignModule extends BlockEntitySearchModule {
@@ -17,7 +15,7 @@ public class SignModule extends BlockEntitySearchModule {
     }
 
     @Override
-    public Object processChunkBlockEntities(List<CompoundTag> blockEntities) {
+    public List<? extends DataClass> processChunkBlockEntities(List<CompoundTag> blockEntities) {
         List<SignData> signs = new ArrayList<>();
 
         blockEntities.stream()
@@ -27,12 +25,11 @@ public class SignModule extends BlockEntitySearchModule {
                     signs.add(SignData.fromModel(sign));
                 });
 
-        return signs.isEmpty() ? null : signs;
+        return signs;
     }
 
-    @RequiredArgsConstructor
     @Data
-    public static class SignData {
+    private static class SignData implements DataClass {
         private final int x;
         private final int y;
         private final int z;
@@ -60,8 +57,18 @@ public class SignModule extends BlockEntitySearchModule {
         }
 
         @Override
-        public String toString() {
-            return String.format("%d,%d,%d,%s,%s,%s", x,y,z,Arrays.toString(frontText), color, glowing);
+        public List<String> getFieldNames() {
+            return List.of("x", "y", "z", "frontText", "color", "glowing");
         }
+
+        @Override
+        public List<Object> getFieldValues() {
+            return List.of(x, y, z, frontText, color, glowing);
+        }
+    }
+
+    @Override
+    public String getDescription() {
+        return "Find all signs in the world with their data.";
     }
 }

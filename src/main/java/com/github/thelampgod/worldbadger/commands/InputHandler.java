@@ -17,7 +17,7 @@ public class InputHandler {
 
     public void listenForInput() {
         System.out.print("> ");
-        while (scanner.hasNext()) {
+        while (main.isRunning()) {
             String[] split = scanner.nextLine().split(" ");
 
             String commandName = split[0];
@@ -34,7 +34,6 @@ public class InputHandler {
                 main.logger.error("{}: command not found.", commandName);
             } catch (Exception e) {
                 main.logger.error(e.getMessage());
-                e.printStackTrace();
             } finally {
                 System.out.print("> ");
             }

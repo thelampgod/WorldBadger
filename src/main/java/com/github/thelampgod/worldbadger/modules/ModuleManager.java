@@ -1,8 +1,11 @@
 package com.github.thelampgod.worldbadger.modules;
 
+import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
-import com.github.thelampgod.worldbadger.modules.impl.EntitiesModule;
+import com.github.thelampgod.worldbadger.modules.impl.EntityModule;
+import com.github.thelampgod.worldbadger.modules.impl.OldChunksModule;
 import com.github.thelampgod.worldbadger.modules.impl.SignModule;
+import lombok.Getter;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
@@ -12,12 +15,17 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ModuleManager {
+    @Getter
     private final Set<SearchModule> modules = new HashSet<>();
 
-    public ModuleManager() {
+    private final WorldBadger instance;
+
+    public ModuleManager(WorldBadger instance) {
+        this.instance = instance;
         modules.add(new SignModule());
         modules.add(new BlockModule());
-        modules.add(new EntitiesModule());
+        modules.add(new EntityModule());
+        modules.add(new OldChunksModule());
     }
 
     public Optional<SearchModule> findModule(String name) {
@@ -41,15 +49,12 @@ public class ModuleManager {
                         .toList();
 
                 var ret = mod.processChunkBlockEntities(blockEntities);
-
-                if (ret == null) return;
-                System.out.println(ret);
+                instance.getOutputMode().processChunkResult(mod.getName(), ret);
                 return;
             }
 
             var ret = module.processChunk(chunk);
-            if (ret == null) return;
-            System.out.println(ret);
+            instance.getOutputMode().processChunkResult(module.getName(), ret);
         });
     }
 
@@ -64,9 +69,7 @@ public class ModuleManager {
                             .toList();
 
                     var ret = module.processEntities(entities);
-
-                    if (ret == null) return;
-                    System.out.println(ret);
+                    instance.getOutputMode().processChunkResult(module.getName(), ret);
                 });
     }
 }

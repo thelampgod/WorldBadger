@@ -31,13 +31,17 @@ public class RunCommand extends Command {
             main.logger.info(moduleName);
         }
 
-        main.getWorldManager().startSearch();
+        try {
+            main.getWorldManager().startSearch();
+        } catch (Exception e) {
+            main.logger.error("Error in search: {}", e.getMessage(), e);
+        }
         main.logger.info("Done!");
     }
 
     @Override
     public String description() {
-        return "Starts the search";
+        return "Starts the search.";
     }
 
 
