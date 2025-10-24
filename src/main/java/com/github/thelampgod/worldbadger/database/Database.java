@@ -3,7 +3,6 @@ package com.github.thelampgod.worldbadger.database;
 import com.github.thelampgod.worldbadger.output.DataClass;
 import com.google.gson.Gson;
 import lombok.Getter;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,9 +60,7 @@ public class Database {
         StringBuilder query = new StringBuilder();
 
         for (int i = 0; i < data.getFieldNames().size(); ++i) {
-            String column = """
-                    "{fieldName}" {fieldValueType} NOT NULL
-                    """;
+            String column = "\"{fieldName}\" {fieldValueType} NOT NULL";
             String fieldName = data.getFieldNames().get(i);
             Object fieldValue = data.getFieldValues().get(i);
 
@@ -72,9 +69,9 @@ public class Database {
             query.append(column
                             .replace("{fieldName}", fieldName)
                             .replace("{fieldValueType}", fieldValueType))
-                    .append(",");
+                    .append(",\n");
         }
-        return query.substring(0, query.length() - 1);
+        return query.substring(0, query.length() - 2);
     }
 
     private String getSqlType(Object value) {
