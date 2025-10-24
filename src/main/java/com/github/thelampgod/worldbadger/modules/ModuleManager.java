@@ -1,10 +1,7 @@
 package com.github.thelampgod.worldbadger.modules;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
-import com.github.thelampgod.worldbadger.modules.impl.BlockModule;
-import com.github.thelampgod.worldbadger.modules.impl.EntityModule;
-import com.github.thelampgod.worldbadger.modules.impl.OldChunksModule;
-import com.github.thelampgod.worldbadger.modules.impl.SignModule;
+import com.github.thelampgod.worldbadger.modules.impl.*;
 import lombok.Getter;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
@@ -26,6 +23,7 @@ public class ModuleManager {
         modules.add(new BlockModule());
         modules.add(new EntityModule());
         modules.add(new OldChunksModule());
+        modules.add(new BlockEntityModule());
     }
 
     public Optional<SearchModule> findModule(String name) {

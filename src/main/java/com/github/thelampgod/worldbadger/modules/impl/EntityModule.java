@@ -4,14 +4,14 @@ import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
 import com.github.thelampgod.worldbadger.output.DataClass;
 import lombok.Data;
 import net.querz.nbt.CompoundTag;
-import net.querz.nbt.io.snbt.SNBTWriter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.thelampgod.worldbadger.util.Helper.SNBT_WRITER;
+
 public class EntityModule extends EntitySearchModule {
-    private static final SNBTWriter nbt = new SNBTWriter();
 
     public EntityModule() {
         super("entity");
@@ -40,7 +40,7 @@ public class EntityModule extends EntitySearchModule {
 
             if (y >= minY && y <= maxY) {
                 if (printNbt) {
-                    foundEntities.add(new EntityData(x, y, z, id, nbt.toString(tag)));
+                    foundEntities.add(new EntityData(x, y, z, id, SNBT_WRITER.toString(tag)));
                 } else {
                     foundEntities.add(new EntityData(x, y, z, id, null));
                 }

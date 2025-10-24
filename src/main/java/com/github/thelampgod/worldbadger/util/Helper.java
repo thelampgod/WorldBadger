@@ -1,5 +1,7 @@
 package com.github.thelampgod.worldbadger.util;
 
+import net.querz.nbt.io.snbt.SNBTWriter;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,6 +13,8 @@ import java.nio.file.Path;
 import java.util.Collections;
 
 public class Helper {
+
+    public static final SNBTWriter SNBT_WRITER = new SNBTWriter();
 
     public static Path getResourceAsPath(URL resource, String resourcePath) throws IOException, URISyntaxException {
         Path directory;
