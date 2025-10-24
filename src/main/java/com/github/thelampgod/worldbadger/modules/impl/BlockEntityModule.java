@@ -75,7 +75,7 @@ public class BlockEntityModule extends BlockEntitySearchModule {
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, y, z, id, nbt);
+            return List.of(x, y, z, id, nbt != null ? nbt : "");
         }
     }
 }

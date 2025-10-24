@@ -66,7 +66,7 @@ public class EntityModule extends EntitySearchModule {
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, y, z, entityId, nbt);
+            return List.of(x, y, z, entityId, nbt != null ? nbt : "");
         }
     }
 
