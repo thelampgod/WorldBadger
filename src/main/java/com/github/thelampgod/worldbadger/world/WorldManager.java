@@ -2,6 +2,7 @@ package com.github.thelampgod.worldbadger.world;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
+import com.github.thelampgod.worldbadger.util.ProgressBar;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -31,15 +32,23 @@ public class WorldManager {
     public void startSearch() throws Exception {
         main.getOutputMode().initialize(this.outputFolder);
         long start = System.currentTimeMillis();
+
         boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()
                 .anyMatch(module -> !(module instanceof EntitySearchModule));
+        boolean shouldSearchEntities = main.getModuleManager().getEnabledModules().stream()
+                .anyMatch(module -> (module instanceof EntitySearchModule));
+
+        int total = (shouldSearchRegions ? world.getRegions().size() : 0) + (shouldSearchEntities ? world.getEntities().size() : 0);
+        ProgressBar progress = new ProgressBar(total, main.getOutputMode());
+
         if (shouldSearchRegions) {
             world.getRegions().parallelStream()
                     .forEach(region -> {
                         try {
                             region.load();
                             region.forEach(chunk -> main.getModuleManager().processChunk(chunk));
-
+                            progress.increment();
+                            progress.printProgressBar();
                         } catch (IOException e) {
                             main.logger.error("Failed to load region {}", region.getName());
                         } finally {
@@ -48,8 +57,6 @@ public class WorldManager {
                     });
         }
 
-        boolean shouldSearchEntities = main.getModuleManager().getEnabledModules().stream()
-                .anyMatch(module -> (module instanceof EntitySearchModule));
 
         if (shouldSearchEntities) {
             world.getEntities().parallelStream()
@@ -57,6 +64,8 @@ public class WorldManager {
                         try {
                             region.load();
                             region.forEach(chunk -> main.getModuleManager().processEntities(chunk));
+                            progress.increment();
+                            progress.printProgressBar();
 
                         } catch (IOException e) {
                             main.logger.error("Failed to load region {}", region.getName());
@@ -66,6 +75,7 @@ public class WorldManager {
                     });
         }
 
+        System.out.println();
         main.logger.info("Search finished in {}ms", System.currentTimeMillis() - start);
         main.getOutputMode().close();
     }
