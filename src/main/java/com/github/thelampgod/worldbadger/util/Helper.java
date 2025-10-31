@@ -15,6 +15,7 @@ import java.util.Collections;
 public class Helper {
 
     public static final SNBTWriter SNBT_WRITER = new SNBTWriter();
+    public static final String DEL_LINE = "\33[2K\r" ;
 
     public static Path getResourceAsPath(URL resource, String resourcePath) throws IOException, URISyntaxException {
         Path directory;
@@ -32,4 +33,5 @@ public class Helper {
         }
         return directory;
     }
+
 }
