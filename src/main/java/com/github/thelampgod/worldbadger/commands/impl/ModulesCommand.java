@@ -16,7 +16,7 @@ public class ModulesCommand extends Command {
 
         StringBuilder builder = new StringBuilder("Modules: \n");
 
-        main.getModuleManager().getModules()
+        main.getModuleManager().getModuleMap().values()
                 .forEach(module -> {
                     builder.append("> ")
                             .append(module.getName())

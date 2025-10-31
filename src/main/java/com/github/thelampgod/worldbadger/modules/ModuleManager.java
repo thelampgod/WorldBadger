@@ -6,34 +6,37 @@ import lombok.Getter;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class ModuleManager {
     @Getter
-    private final Set<SearchModule> modules = new HashSet<>();
+    private final Map<String, SearchModule> moduleMap = new HashMap<>();
 
     private final WorldBadger instance;
 
     public ModuleManager(WorldBadger instance) {
         this.instance = instance;
-        modules.add(new SignModule());
-        modules.add(new BlockModule());
-        modules.add(new EntityModule());
-        modules.add(new OldChunksModule());
-        modules.add(new BlockEntityModule());
+        put("sign", new SignModule());
+        put("block", new BlockModule());
+        put("entity", new EntityModule());
+        put("oldchunks", new OldChunksModule());
+        put("block-entity", new BlockEntityModule());
     }
 
-    public Optional<SearchModule> findModule(String name) {
-        return modules.stream()
-                .filter(module -> module.getName().startsWith(name))
-                .findAny();
+
+    private void put(String name, SearchModule instance) {
+        moduleMap.put(name, instance);
+    }
+
+    public SearchModule findModule(String moduleName) throws ModuleNotFoundException {
+        final SearchModule module = moduleMap.get(moduleName);
+
+        if (module == null) throw new ModuleNotFoundException();
+        return module;
     }
 
     public List<SearchModule> getEnabledModules() {
-        return modules.stream()
+        return moduleMap.values().stream()
                 .filter(SearchModule::isToggled)
                 .toList();
     }

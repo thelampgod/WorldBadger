@@ -2,6 +2,8 @@ package com.github.thelampgod.worldbadger.commands.impl;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.Command;
+import com.github.thelampgod.worldbadger.commands.CommandNotFoundException;
+import com.github.thelampgod.worldbadger.modules.ModuleNotFoundException;
 import com.github.thelampgod.worldbadger.modules.SearchModule;
 
 import java.util.Arrays;
@@ -15,17 +17,16 @@ public class AddModuleCommand extends Command {
     @Override
     public void exec(String[] args) {
         super.exec(args);
-        var opt = main.getModuleManager().findModule(args[0]);
+        try {
+            SearchModule module = main.getModuleManager().findModule(args[0].trim().toLowerCase());
 
-        if (opt.isEmpty()) {
-            throw new IllegalArgumentException(args[0] + ": module not found.");
+            module.options(Arrays.copyOfRange(args, 1, args.length));
+            module.setToggled(true);
+
+            main.logger.info("{} toggled", module.getName());
+        } catch (ModuleNotFoundException e) {
+            main.logger.error("{}: module not found.", args[0]);
         }
-        SearchModule module = opt.get();
-
-        module.options(Arrays.copyOfRange(args,1, args.length));
-        module.setToggled(true);
-
-        main.logger.info("{} toggled", module.getName());
     }
 
     @Override
