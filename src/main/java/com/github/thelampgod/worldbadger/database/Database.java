@@ -1,6 +1,7 @@
 package com.github.thelampgod.worldbadger.database;
 
 import com.github.thelampgod.worldbadger.output.DataClass;
+import com.github.thelampgod.worldbadger.util.CsvFormatHelper;
 import com.google.gson.Gson;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,7 @@ public class Database {
     @Getter
     private final Connection connection;
 
-    private final Gson gson = new Gson();
+    private final CsvFormatHelper csvFormatHelper = new CsvFormatHelper();
 
     public Database(String url) throws SQLException {
         this.connection = DriverManager.getConnection(url);
@@ -158,10 +159,10 @@ public class Database {
             stmt.setString(index, (String) value);
         } else if (value.getClass().isArray() || value instanceof Collection) {
             // Convert arrays/collections to JSON
-            stmt.setString(index, gson.toJson(value));
+            stmt.setString(index, csvFormatHelper.formatCsvValue(value));
         } else {
             // Convert any other object to JSON
-            stmt.setString(index, gson.toJson(value));
+            stmt.setString(index, csvFormatHelper.formatCsvValue(value));
         }
     }
 }

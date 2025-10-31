@@ -56,6 +56,12 @@ public class BlockModule extends SearchModule {
     private List<BlockData> processSection(int chunkX, int chunkZ, int ySection, CompoundTag section) {
         List<BlockData> foundBlocks = new ArrayList<>();
 
+        if (!section.containsKey("block_states")) {
+            // sometimes section 20 exists and has no block_state, lets just ignore this for now
+            // TODO: log maybe?
+            return foundBlocks;
+        }
+
         CompoundTag blockStates = section.getCompound("block_states");
         ListTag palette = blockStates.getList("palette");
 
