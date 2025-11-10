@@ -1,6 +1,7 @@
 package com.github.thelampgod.worldbadger.world;
 
 import lombok.Getter;
+import net.querz.mca.MCAFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,9 +16,12 @@ public class World {
 
     private final Path worldRoot;
 
+    private int minX, minZ, maxX, maxZ;
+
     public World(String worldPath, int dimension) throws IOException {
         this.worldRoot = Path.of(worldPath);
         findRegions(dimension);
+        calculateBounds();
     }
 
     private void findRegions(int dimension) throws IOException {
@@ -58,5 +62,13 @@ public class World {
 
 
         return temp;
+    }
+
+
+    private void calculateBounds() {
+        this.maxX = regions.stream().mapToInt(MCAFile::getX).map(rX -> rX << 9).max().getAsInt();
+        this.minX = regions.stream().mapToInt(MCAFile::getX).map(rX -> rX << 9).min().getAsInt();
+        this.maxZ = regions.stream().mapToInt(MCAFile::getZ).map(rZ -> rZ << 9).max().getAsInt();
+        this.minZ = regions.stream().mapToInt(MCAFile::getZ).map(rZ -> rZ << 9).min().getAsInt();
     }
 }

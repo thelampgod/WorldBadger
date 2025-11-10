@@ -74,34 +74,34 @@ public class OldChunksModule extends SearchModule {
 
     @Data
     private static class ChunkData implements DataClass {
-        private final int x;
-        private final int z;
+        private final int chunkX;
+        private final int chunkZ;
         private final boolean isNewerThan1_7;
 
         @Override
         public List<String> getFieldNames() {
-            return List.of("x", "z", "isNewerThan1_7");
+            return List.of("chunkX", "chunkZ", "isNewerThan1_7");
         }
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, z, isNewerThan1_7);
+            return List.of(chunkX, chunkZ, isNewerThan1_7);
         }
     }
 
     @Data
     private static class OldChunkData implements DataClass {
-        private final int x;
-        private final int z;
+        private final int chunkX;
+        private final int chunkZ;
 
         @Override
         public List<String> getFieldNames() {
-            return List.of("x", "z");
+            return List.of("chunkX", "chunkZ");
         }
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, z);
+            return List.of(chunkX, chunkZ);
         }
     }
 

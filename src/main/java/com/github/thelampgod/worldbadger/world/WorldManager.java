@@ -2,6 +2,7 @@ package com.github.thelampgod.worldbadger.world;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.modules.EntitySearchModule;
+import com.github.thelampgod.worldbadger.output.impl.ImageOutput;
 import com.github.thelampgod.worldbadger.util.ProgressBar;
 import lombok.Getter;
 
@@ -31,6 +32,10 @@ public class WorldManager {
 
     public void startSearch() throws Exception {
         main.getOutputMode().initialize(this.outputFolder);
+        if (main.getOutputMode() instanceof ImageOutput imageOutput) {
+            imageOutput.setBounds(world.getMinX(), world.getMinZ(), world.getMaxX(), world.getMaxZ());
+        }
+
         long start = System.currentTimeMillis();
 
         boolean shouldSearchRegions = main.getModuleManager().getEnabledModules().stream()

@@ -63,6 +63,7 @@ public class ModuleManager {
                 instance.getOutputMode().processChunkResult(module.getName(), ret);
             } catch (Exception e) {
                 instance.logger.error("Failed to process chunk {}: {}", chunk.getX() + "," + chunk.getZ(), e.getMessage());
+                e.printStackTrace();
             }
         });
     }

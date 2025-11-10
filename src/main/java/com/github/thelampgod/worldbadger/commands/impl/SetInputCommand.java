@@ -38,6 +38,7 @@ public class SetInputCommand extends Command {
                     world.getRegions().size(),
                     world.getEntities().size()
             );
+            main.logger.info("World bounds: ({},{}) -> ({},{})", world.getMinX(), world.getMinZ(), world.getMaxX(), world.getMaxZ());
         } catch (IOException e) {
             main.logger.error("Failed to load world: {}", e.getMessage());
         }

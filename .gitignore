@@ -41,5 +41,5 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-logs/
-output/
+/logs/
+/output/

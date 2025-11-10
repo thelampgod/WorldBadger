@@ -5,6 +5,7 @@ import com.github.thelampgod.worldbadger.commands.Command;
 import com.github.thelampgod.worldbadger.output.impl.ConsoleOutput;
 import com.github.thelampgod.worldbadger.output.impl.CsvOutput;
 import com.github.thelampgod.worldbadger.output.impl.DatabaseOutput;
+import com.github.thelampgod.worldbadger.output.impl.ImageOutput;
 
 public class SetOutputModeCommand extends Command {
     public SetOutputModeCommand(WorldBadger main) {
@@ -23,6 +24,10 @@ public class SetOutputModeCommand extends Command {
             case "DB" -> {
                 main.setOutputMode(new DatabaseOutput());
                 main.logger.info("Set outputmode to DB");
+            }
+            case "IMAGE" -> {
+                main.setOutputMode(new ImageOutput());
+                main.logger.info("Set outputmode to IMAGE");
             }
             default -> {
                 main.setOutputMode(new ConsoleOutput());
