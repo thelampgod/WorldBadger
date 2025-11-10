@@ -10,7 +10,6 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +22,8 @@ public class ImageOutput implements OutputMode {
 
     private int minX, minZ, maxX, maxZ;
     private boolean boundsSet = false;
+    private double scaleFactor = 1.0;
+    private final int MAX_DIMENSION = 32767;
 
     private Path outputFolder;
 
@@ -34,6 +35,23 @@ public class ImageOutput implements OutputMode {
         this.maxX = maxX;
         this.maxZ = maxZ;
         this.boundsSet = true;
+
+        // Calculate scale factor to fit within MAX_DIMENSION
+        int worldWidth = maxX - minX + 1;
+        int worldHeight = maxZ - minZ + 1;
+
+        this.scaleFactor = Math.min(
+                (double)MAX_DIMENSION / worldWidth,
+                (double)MAX_DIMENSION / worldHeight
+        );
+
+        // Don't scale up, only scale down
+        if (this.scaleFactor > 1.0) {
+            this.scaleFactor = 1.0;
+        }
+
+        System.out.printf("Image scaling: %dx%d world -> scale %.4f%n",
+                worldWidth, worldHeight, scaleFactor);
     }
 
     @Override
@@ -57,10 +75,18 @@ public class ImageOutput implements OutputMode {
 
         BufferedImage image = moduleToImageMap.computeIfAbsent(moduleName, name -> {
             if (isChunkCoord) {
-                return new BufferedImage(((maxX - minX) >> 4) + 1, ((maxZ - minZ) >> 4) + 1, BufferedImage.TYPE_BYTE_BINARY);
+                int chunkWidth = ((maxX - minX) >> 4) + 1;
+                int chunkHeight = ((maxZ - minZ) >> 4) + 1;
+                int scaledWidth = (int)(chunkWidth * scaleFactor);
+                int scaledHeight = (int)(chunkHeight * scaleFactor);
+                return new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_BYTE_BINARY);
             }
 
-            return new BufferedImage(maxX - minX + 1, maxZ - minZ + 1, BufferedImage.TYPE_BYTE_BINARY);
+            int blockWidth = maxX - minX + 1;
+            int blockHeight = maxZ - minZ + 1;
+            int scaledWidth = (int)(blockWidth * scaleFactor);
+            int scaledHeight = (int)(blockHeight * scaleFactor);
+            return new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_BYTE_BINARY);
         });
         WritableRaster raster = image.getRaster();
 
@@ -71,13 +97,27 @@ public class ImageOutput implements OutputMode {
 
                 int x = ((Number)result.getFieldValues().get(result.getFieldNames().indexOf("chunkX"))).intValue();
                 int y = ((Number)result.getFieldValues().get(result.getFieldNames().indexOf("chunkZ"))).intValue();
-                raster.setSample(x - minChunkX, y - minChunkZ,0, 1);
+
+                // Apply scaling to coordinates
+                int scaledX = (int)((x - minChunkX) * scaleFactor);
+                int scaledY = (int)((y - minChunkZ) * scaleFactor);
+
+                if (scaledX >= 0 && scaledX < image.getWidth() && scaledY >= 0 && scaledY < image.getHeight()) {
+                    raster.setSample(scaledX, scaledY, 0, 1);
+                }
                 continue;
             }
 
             int x = ((Number)result.getFieldValues().get(result.getFieldNames().indexOf("x"))).intValue();
             int y = ((Number)result.getFieldValues().get(result.getFieldNames().indexOf("z"))).intValue();
-            raster.setSample(x - minX,y - minZ,0, 1);
+
+            // Apply scaling to coordinates
+            int scaledX = (int)((x - minX) * scaleFactor);
+            int scaledY = (int)((y - minZ) * scaleFactor);
+
+            if (scaledX >= 0 && scaledX < image.getWidth() && scaledY >= 0 && scaledY < image.getHeight()) {
+                raster.setSample(scaledX, scaledY, 0, 1);
+            }
         }
     }
 
@@ -92,6 +132,7 @@ public class ImageOutput implements OutputMode {
                 Path imagePath = outputFolder.resolve(moduleName + "_map.png");
                 ImageIO.write(image, "PNG", imagePath.toFile());
                 System.out.println("Saved image for " + moduleName + " to: " + imagePath);
+                System.out.println("Final image size: " + image.getWidth() + "x" + image.getHeight());
             } catch (IOException e) {
                 System.err.println("Failed to save image for " + moduleName + ": " + e.getMessage());
             }
