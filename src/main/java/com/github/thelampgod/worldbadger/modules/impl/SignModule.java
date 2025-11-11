@@ -9,6 +9,7 @@ import net.querz.nbt.ListTag;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: handle hanging_sign
 public class SignModule extends BlockEntitySearchModule {
     public SignModule() {
         super("sign");

@@ -35,6 +35,15 @@ public class BlockUtils {
         return foundBlocks;
     }
 
+    public static List<BlockPosition> findBlocksInChunk(Chunk chunk, Set<String> blockStates) {
+        Map<String, BlockSearchCriteria> blockSearchCriteria = new HashMap<>();
+        for (String blockState : blockStates) {
+            blockSearchCriteria.put(blockState, new BlockSearchCriteria());
+        }
+
+        return findBlocksInChunk(chunk, blockSearchCriteria);
+    }
+
     /**
      * Get the block ID at a specific coordinate in a chunk
      *
