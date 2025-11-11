@@ -38,6 +38,11 @@ public class BlockUtils {
     public static List<BlockPosition> findBlocksInChunk(Chunk chunk, Set<String> blockStates) {
         Map<String, BlockSearchCriteria> blockSearchCriteria = new HashMap<>();
         for (String blockState : blockStates) {
+            // add namespace if missing
+            if (!blockState.startsWith("minecraft:")) {
+                blockState = "minecraft:" + blockState;
+            }
+
             blockSearchCriteria.put(blockState, new BlockSearchCriteria());
         }
 
@@ -227,6 +232,9 @@ public class BlockUtils {
             this.blockId = blockId;
         }
 
+        public boolean positionMatches(int x, int y, int z) {
+            return this.x == x && this.y == y && this.z == z;
+        }
     }
 
     /**

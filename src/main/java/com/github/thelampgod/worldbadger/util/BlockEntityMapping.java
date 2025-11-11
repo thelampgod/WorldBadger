@@ -123,7 +123,7 @@ public class BlockEntityMapping {
 
         // Same name block form / block entity (1:1 mapping)
         String[] sameNameEntities = {
-                "creaking_heart", "end_portal", "end_gateway", "furnace", "blast_furnace",
+                "barrel", "creaking_heart", "end_portal", "end_gateway", "furnace", "blast_furnace",
                 "smoker", "trapped_chest", "ender_chest", "enchanting_table", "lectern",
                 "jukebox", "bell", "brewing_stand", "trial_spawner", "vault", "decorated_pot",
                 "beacon", "conduit", "comparator", "hopper", "dispenser", "dropper",
@@ -151,36 +151,36 @@ public class BlockEntityMapping {
      * Get all valid blocks for a block entity type
      */
     public static Set<String> getBlocksForBlockEntity(String blockEntityId) {
-        return BLOCK_ENTITY_TO_BLOCKS.getOrDefault(blockEntityId, Collections.emptySet());
+        return BLOCK_ENTITY_TO_BLOCKS.getOrDefault(normalizeNamespace(blockEntityId), Collections.emptySet());
     }
 
     /**
      * Get the block entity type for a given block
      */
     public static String getBlockEntityForBlock(String blockId) {
-        return BLOCK_TO_BLOCK_ENTITY.get(blockId);
+        return BLOCK_TO_BLOCK_ENTITY.get(normalizeNamespace(blockId));
     }
 
     /**
      * Check if a block entity has a valid corresponding block at the given position
      */
     public static boolean isValidBlockForBlockEntity(String blockEntityId, String blockId) {
-        Set<String> validBlocks = getBlocksForBlockEntity(blockEntityId);
-        return validBlocks.contains(blockId);
+        Set<String> validBlocks = getBlocksForBlockEntity(normalizeNamespace(blockEntityId));
+        return validBlocks.contains(normalizeNamespace(blockId));
     }
 
     /**
      * Check if a block should have a block entity
      */
     public static boolean shouldHaveBlockEntity(String blockId) {
-        return BLOCK_TO_BLOCK_ENTITY.containsKey(blockId);
+        return BLOCK_TO_BLOCK_ENTITY.containsKey(normalizeNamespace(blockId));
     }
 
     /**
      * Check if a block entity type is known
      */
     public static boolean isKnownBlockEntity(String blockEntityId) {
-        return BLOCK_ENTITY_TO_BLOCKS.containsKey(blockEntityId);
+        return BLOCK_ENTITY_TO_BLOCKS.containsKey(normalizeNamespace(blockEntityId));
     }
 
     /**
@@ -195,5 +195,13 @@ public class BlockEntityMapping {
      */
     public static Set<String> getAllBlocksWithBlockEntities() {
         return BLOCK_TO_BLOCK_ENTITY.keySet();
+    }
+
+    private static String normalizeNamespace(String id) {
+        if (id.startsWith("minecraft:")) {
+            return id.substring(10);
+        }
+
+        return id;
     }
 }
