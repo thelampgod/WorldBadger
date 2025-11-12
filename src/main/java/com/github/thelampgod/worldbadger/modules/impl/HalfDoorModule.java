@@ -40,22 +40,28 @@ public class HalfDoorModule extends SearchModule {
             Vec3i otherPos = new Vec3i(door.getX(), door.getY() + (bottomHalf ? 1 : -1), door.getZ());
             BlockState otherHalf = BlockUtils.getBlockAtCoordinate(chunk, otherPos.getX(), otherPos.getY(), otherPos.getZ());
 
-            if (otherHalf == null || !door.getId().equals(otherHalf.getId())) {
-                results.add(new HalfDoorData(door.getX(), door.getY(), door.getZ(), door.getId(), (bottomHalf) ? "lower" : "upper"));
+            // Only mark the other position as checked if it's actually the correct complementary half
+            boolean isValidDoorPair = false;
 
-                checkedPositions.add(currentPos);
-                checkedPositions.add(otherPos);
-                continue;
+            if (otherHalf != null && door.getId().equals(otherHalf.getId())) {
+                boolean otherBottomHalf = otherHalf.getProperties().get("half").equals("lower");
+
+                // Valid pair: one is lower, one is upper, and they're the same door type
+                if (bottomHalf != otherBottomHalf) {
+                    isValidDoorPair = true;
+                    // Mark both positions as checked since they form a valid complete door
+                    checkedPositions.add(currentPos);
+                    checkedPositions.add(otherPos);
+                }
             }
 
-            boolean otherBottomHalf = otherHalf.getProperties().get("half").equals("lower");
+            // If we don't have a valid door pair, this is a half door
+            if (!isValidDoorPair) {
+                results.add(new HalfDoorData(door.getX(), door.getY(), door.getZ(), door.getId(), bottomHalf ? "lower" : "upper"));
 
-            // if both halves are the same type, log as well
-            if (bottomHalf == otherBottomHalf) {
-                results.add(new HalfDoorData(door.getX(), door.getY(), door.getZ(), door.getId(), (bottomHalf) ? "lower" : "upper"));
-
+                // Only mark current position as checked, not the other position
+                // because the other position might contain another half door that needs to be checked
                 checkedPositions.add(currentPos);
-                checkedPositions.add(otherPos);
             }
         }
 
@@ -69,7 +75,6 @@ public class HalfDoorModule extends SearchModule {
         private final int z;
         private final String doorType;
         private final String existingHalf;
-
 
         @Override
         public List<String> getFieldNames() {
