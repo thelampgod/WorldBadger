@@ -3,7 +3,7 @@ package com.github.thelampgod.worldbadger.util.blocks;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class BlockState {
@@ -13,8 +13,7 @@ public class BlockState {
 
     private final String id;
 
-    private final List<Property> properties;
-
+    private final Map<String, String> properties;
 
     public boolean positionMatches(int x, int y, int z) {
         return this.x == x && this.y == y && this.z == z;

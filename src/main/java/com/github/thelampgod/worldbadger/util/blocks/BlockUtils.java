@@ -4,6 +4,7 @@ import com.github.thelampgod.worldbadger.util.Helper;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
+import org.apache.logging.log4j.core.config.Property;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -118,11 +119,11 @@ public class BlockUtils {
 
     private static BlockState extractBlockState(CompoundTag tag, int absX, int absY, int absZ) {
         String blockId = tag.getString("Name");
-        List<Property> properties = new ArrayList<>();
+        Map<String, String> properties = new HashMap<>();
 
         if (tag.containsKey("Properties")) {
             tag.getCompound("Properties").forEach(prop -> {
-                properties.add(new Property(prop.getKey(), Helper.SNBT_WRITER.toString(prop.getValue())));
+                properties.put(prop.getKey(), Helper.SNBT_WRITER.toString(prop.getValue()));
             });
         }
 
