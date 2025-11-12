@@ -9,6 +9,7 @@ import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,59 @@ public class DatalessModule extends SearchModule {
                 .map(CompoundTag.class::cast)
                 .toList();
 
-        // find block state block entities that do not exist in the block entity list
+        results.addAll(checkBlockStates(blockStateEntities, blockEntities));
+
+        results.addAll(checkBlockEntities(blockEntities, blockStateEntities, chunk));
+
+        return results;
+    }
+
+    /**
+     * Find block entities that do not exist in block form
+     * @param blockEntities chunk block entities
+     * @param blockStateEntities chunk block states that should have a block entity
+     * @param chunk
+     * @return list of results
+     */
+    private Collection<? extends DatalessResult> checkBlockEntities(List<CompoundTag> blockEntities, List<BlockUtils.BlockPosition> blockStateEntities, Chunk chunk) {
+        final List<DatalessResult> results = new ArrayList<>();
+        blockEntityLoop:
+        for (CompoundTag blockEntity : blockEntities) {
+            int x = blockEntity.getInt("x");
+            int y = blockEntity.getInt("y");
+            int z = blockEntity.getInt("z");
+            String blockEntityId = blockEntity.getString("id");
+
+            // Handle minecraft: namespace if present
+            if (blockEntityId.startsWith("minecraft:")) {
+                blockEntityId = blockEntityId.substring(10);
+            }
+
+            for (BlockUtils.BlockPosition position : blockStateEntities) {
+                if (position.positionMatches(x,y,z)) {
+                    if (BlockEntityMapping.isValidBlockForBlockEntity(blockEntityId, position.getBlockId())) {
+                        // block entity exists in block state form, all good
+                        continue blockEntityLoop;
+                    }
+                    // there's a different block entity block state in this block entities position, log
+                    results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITH_MISMATCHED_BLOCK", blockEntityId, position.getBlockId()));
+                    continue blockEntityLoop;
+                }
+            }
+            // no matching block state for the block entity found, log
+            results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITHOUT_BLOCK", blockEntityId, BlockUtils.getBlockAtCoordinate(chunk, x,y,z)));
+        }
+        return results;
+    }
+
+    /**
+     *  Find block state block entities that do not exist in block entity form
+     * @param blockStateEntities chunk block states that should have a block entity
+     * @param blockEntities chunk block entities
+     * @return list of results
+     */
+    private List<DatalessResult> checkBlockStates(final List<BlockUtils.BlockPosition> blockStateEntities, final List<CompoundTag> blockEntities) {
+        final List<DatalessResult> results = new ArrayList<>();
         blockStatesLoop:
         for (BlockUtils.BlockPosition position : blockStateEntities) {
             String expectedBlockEntity = BlockEntityMapping.getBlockEntityForBlock(position.getBlockId());
@@ -63,35 +116,6 @@ public class DatalessModule extends SearchModule {
                     "BLOCK_WITHOUT_BLOCK_ENTITY", position.getBlockId(), "null")
             );
         }
-
-        // find block entities that do not exist in block form
-        blockEntityLoop:
-        for (CompoundTag blockEntity : blockEntities) {
-            int x = blockEntity.getInt("x");
-            int y = blockEntity.getInt("y");
-            int z = blockEntity.getInt("z");
-            String blockEntityId = blockEntity.getString("id");
-
-            // Handle minecraft: namespace if present
-            if (blockEntityId.startsWith("minecraft:")) {
-                blockEntityId = blockEntityId.substring(10);
-            }
-
-            for (BlockUtils.BlockPosition position : blockStateEntities) {
-                if (position.positionMatches(x,y,z)) {
-                    if (BlockEntityMapping.isValidBlockForBlockEntity(blockEntityId, position.getBlockId())) {
-                        // block entity exists in block state form, all good
-                        continue blockEntityLoop;
-                    }
-                    // there's a different block entity block state in this block entities position, log
-                    results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITH_MISMATCHED_BLOCK", blockEntityId, position.getBlockId()));
-                    continue blockEntityLoop;
-                }
-            }
-            // no matching block state for the block entity found, log
-            results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITHOUT_BLOCK", blockEntityId, BlockUtils.getBlockAtCoordinate(chunk, x,y,z)));
-        }
-
 
         return results;
     }
