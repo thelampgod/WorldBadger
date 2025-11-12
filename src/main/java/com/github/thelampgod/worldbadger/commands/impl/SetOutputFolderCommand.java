@@ -18,6 +18,8 @@ public class SetOutputFolderCommand extends Command {
         String folder = args[0];
         try {
             main.getWorldManager().setOutputFolder(folder);
+
+            main.logger.info("Set output folder to {}", folder);
         } catch (Exception e) {
             main.logger.error(e.getMessage());
         }
