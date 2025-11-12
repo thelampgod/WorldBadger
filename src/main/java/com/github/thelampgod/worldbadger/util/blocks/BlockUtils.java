@@ -1,6 +1,5 @@
-package com.github.thelampgod.worldbadger.util;
+package com.github.thelampgod.worldbadger.util.blocks;
 
-import lombok.Getter;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
@@ -15,10 +14,10 @@ public class BlockUtils {
      *
      * @param chunk The chunk to search in
      * @param blockSearchCriteria Map of block IDs to their search criteria
-     * @return List of found block positions and their IDs
+     * @return List of found block states and their positions
      */
-    public static List<BlockPosition> findBlocksInChunk(Chunk chunk, Map<String, BlockSearchCriteria> blockSearchCriteria) {
-        List<BlockPosition> foundBlocks = new ArrayList<>();
+    public static List<BlockState> findBlocksInChunk(Chunk chunk, Map<String, BlockSearchCriteria> blockSearchCriteria) {
+        List<BlockState> foundBlocks = new ArrayList<>();
         var list = chunk.getData().getList("sections");
 
         int chunkX = chunk.getX();
@@ -35,15 +34,15 @@ public class BlockUtils {
         return foundBlocks;
     }
 
-    public static List<BlockPosition> findBlocksInChunk(Chunk chunk, Set<String> blockStates) {
+    public static List<BlockState> findBlocksInChunk(Chunk chunk, Set<String> blockStateIds) {
         Map<String, BlockSearchCriteria> blockSearchCriteria = new HashMap<>();
-        for (String blockState : blockStates) {
+        for (String blockStateId : blockStateIds) {
             // add namespace if missing
-            if (!blockState.startsWith("minecraft:")) {
-                blockState = "minecraft:" + blockState;
+            if (!blockStateId.startsWith("minecraft:")) {
+                blockStateId = "minecraft:" + blockStateId;
             }
 
-            blockSearchCriteria.put(blockState, new BlockSearchCriteria());
+            blockSearchCriteria.put(blockStateId, new BlockSearchCriteria());
         }
 
         return findBlocksInChunk(chunk, blockSearchCriteria);
@@ -56,9 +55,9 @@ public class BlockUtils {
      * @param x Absolute X coordinate
      * @param y Absolute Y coordinate
      * @param z Absolute Z coordinate
-     * @return The block ID at the specified coordinate, or null if not found
+     * @return The block state at the specified coordinate, or null if not found
      */
-    public static String getBlockAtCoordinate(Chunk chunk, int x, int y, int z) {
+    public static BlockState getBlockAtCoordinate(Chunk chunk, int x, int y, int z) {
         int relX = x & 0xF;
         int relZ = z & 0xF;
 
@@ -69,14 +68,14 @@ public class BlockUtils {
         for (Object obj : sections) {
             CompoundTag section = (CompoundTag) obj;
             if (section.getByte("Y") == sectionY) {
-                return getBlockInSection(section, y, relX, relZ);
+                return getBlockInSection(section, x, y, z, relX, relZ);
             }
         }
 
         return null;
     }
 
-    private static String getBlockInSection(CompoundTag section, int absY, int relX, int relZ) {
+    private static BlockState getBlockInSection(CompoundTag section, int absX, int absY, int absZ, int relX, int relZ) {
         if (!section.containsKey("block_states")) {
             return null;
         }
@@ -95,7 +94,9 @@ public class BlockUtils {
 
         if (!blockStates.containsKey("data") || blockStates.getLongArray("data").length == 0) {
             // Uniform section
-            return ((CompoundTag) palette.get(0)).getString("Name");
+            CompoundTag tag = ((CompoundTag) palette.get(0));
+
+            return extractBlockState(tag, absX, absY, absZ);
         }
 
         // Mixed blocks section
@@ -109,12 +110,27 @@ public class BlockUtils {
             return null;
         }
 
-        return ((CompoundTag) palette.get(paletteIndex)).getString("Name");
+        CompoundTag tag = ((CompoundTag) palette.get(paletteIndex));
+
+        return extractBlockState(tag, absX, absY, absZ);
     }
 
-    private static List<BlockPosition> processSection(int chunkX, int chunkZ, int ySection, CompoundTag section,
+    private static BlockState extractBlockState(CompoundTag tag, int absX, int absY, int absZ) {
+        String blockId = tag.getString("Name");
+        List<Property> properties = new ArrayList<>();
+
+        if (tag.containsKey("Properties")) {
+            tag.getCompound("Properties").forEach(prop -> {
+                properties.add(new Property(prop.getKey(), prop.getValue().toString()));
+            });
+        }
+
+        return new BlockState(absX, absY, absZ, blockId, properties);
+    }
+
+    private static List<BlockState> processSection(int chunkX, int chunkZ, int ySection, CompoundTag section,
                                                       Map<String, BlockSearchCriteria> blockSearchCriteria) {
-        List<BlockPosition> foundBlocks = new ArrayList<>();
+        List<BlockState> foundBlocks = new ArrayList<>();
 
         if (!section.containsKey("block_states")) {
             // sometimes section 20 exists and has no block_state, lets just ignore this for now
@@ -151,10 +167,11 @@ public class BlockUtils {
         return indices;
     }
 
-    private static List<BlockPosition> processUniformSection(int chunkX, int chunkZ, int ySection, ListTag palette,
+    private static List<BlockState> processUniformSection(int chunkX, int chunkZ, int ySection, ListTag palette,
                                                              Map<String, BlockSearchCriteria> blockSearchCriteria) {
-        List<BlockPosition> foundBlocks = new ArrayList<>();
-        String blockId = ((CompoundTag) palette.get(0)).getString("Name");
+        List<BlockState> foundBlocks = new ArrayList<>();
+        CompoundTag tag = ((CompoundTag) palette.get(0));
+        String blockId = tag.getString("Name");
 
         if (!blockSearchCriteria.containsKey(blockId)) return foundBlocks;
 
@@ -170,16 +187,16 @@ public class BlockUtils {
             int absoluteY = ySection | y;
 
             if (criteria.matches(absoluteY)) {
-                foundBlocks.add(new BlockPosition(absoluteX, absoluteY, absoluteZ, blockId));
+                foundBlocks.add(extractBlockState(tag, absoluteX, absoluteY, absoluteZ));
             }
         }
         return foundBlocks;
     }
 
-    private static List<BlockPosition> processDataArray(int chunkX, int chunkZ, int ySection, CompoundTag section,
+    private static List<BlockState> processDataArray(int chunkX, int chunkZ, int ySection, CompoundTag section,
                                                         ListTag palette, Set<Integer> relevantPaletteIndices,
                                                         Map<String, BlockSearchCriteria> blockSearchCriteria) {
-        List<BlockPosition> foundBlocks = new ArrayList<>();
+        List<BlockState> foundBlocks = new ArrayList<>();
         long[] dataArray = section.getCompound("block_states").getLongArray("data");
 
         int bitsPerBlock = Math.max(4, (int) Math.ceil(Math.log(palette.size()) / Math.log(2)));
@@ -190,7 +207,8 @@ public class BlockUtils {
             int paletteIndex = extractPaletteIndex(dataArray, index, bitsPerBlock, blocksPerLong, mask);
             if (!relevantPaletteIndices.contains(paletteIndex)) continue;
 
-            String blockId = ((CompoundTag) palette.get(paletteIndex)).getString("Name");
+            CompoundTag tag = ((CompoundTag) palette.get(paletteIndex));
+            String blockId = tag.getString("Name");
             BlockSearchCriteria criteria = blockSearchCriteria.get(blockId);
 
             int x = index & 0xF;
@@ -202,7 +220,7 @@ public class BlockUtils {
             int absoluteZ = (chunkZ << 4) | z;
 
             if (criteria.matches(absoluteY)) {
-                foundBlocks.add(new BlockPosition(absoluteX, absoluteY, absoluteZ, blockId));
+                foundBlocks.add(extractBlockState(tag, absoluteX, absoluteY, absoluteZ));
             }
         }
         return foundBlocks;
@@ -213,28 +231,6 @@ public class BlockUtils {
         int bitOffset = (index % blocksPerLong) * bitsPerBlock;
         if (longIndex >= dataArray.length) return 0;
         return (int) ((dataArray[longIndex] >> bitOffset) & mask);
-    }
-
-    /**
-     * Represents a block position with its ID
-     */
-    @Getter
-    public static class BlockPosition {
-        private final int x;
-        private final int y;
-        private final int z;
-        private final String blockId;
-
-        public BlockPosition(int x, int y, int z, String blockId) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.blockId = blockId;
-        }
-
-        public boolean positionMatches(int x, int y, int z) {
-            return this.x == x && this.y == y && this.z == z;
-        }
     }
 
     /**

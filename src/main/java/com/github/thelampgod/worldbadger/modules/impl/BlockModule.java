@@ -2,7 +2,8 @@ package com.github.thelampgod.worldbadger.modules.impl;
 
 import com.github.thelampgod.worldbadger.modules.SearchModule;
 import com.github.thelampgod.worldbadger.output.DataClass;
-import com.github.thelampgod.worldbadger.util.BlockUtils;
+import com.github.thelampgod.worldbadger.util.blocks.BlockState;
+import com.github.thelampgod.worldbadger.util.blocks.BlockUtils;
 import lombok.Data;
 import net.querz.mca.Chunk;
 
@@ -25,10 +26,10 @@ public class BlockModule extends SearchModule {
                         entry -> createCriteriaFromOptions(entry.getValue())
                 ));
 
-        List<BlockUtils.BlockPosition> foundPositions = BlockUtils.findBlocksInChunk(chunk, searchCriteria);
+        List<BlockState> foundBlockStates = BlockUtils.findBlocksInChunk(chunk, searchCriteria);
 
-        return foundPositions.stream()
-                .map(pos -> new BlockData(pos.getX(), pos.getY(), pos.getZ(), pos.getBlockId()))
+        return foundBlockStates.stream()
+                .map(state -> new BlockData(state.getX(), state.getY(), state.getZ(), state.getId()))
                 .collect(Collectors.toList());
     }
 

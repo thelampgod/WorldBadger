@@ -2,8 +2,9 @@ package com.github.thelampgod.worldbadger.modules.impl;
 
 import com.github.thelampgod.worldbadger.modules.SearchModule;
 import com.github.thelampgod.worldbadger.output.DataClass;
-import com.github.thelampgod.worldbadger.util.BlockEntityMapping;
-import com.github.thelampgod.worldbadger.util.BlockUtils;
+import com.github.thelampgod.worldbadger.util.blocks.BlockEntityMapping;
+import com.github.thelampgod.worldbadger.util.blocks.BlockState;
+import com.github.thelampgod.worldbadger.util.blocks.BlockUtils;
 import lombok.Data;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
@@ -23,7 +24,7 @@ public class DatalessModule extends SearchModule {
         List<DatalessResult> results = new ArrayList<>();
         // find block entities in block state form
         final Set<String> blockStates =  BlockEntityMapping.getAllBlocksWithBlockEntities();
-        final List<BlockUtils.BlockPosition> blockStateEntities = BlockUtils.findBlocksInChunk(chunk, blockStates);
+        final List<BlockState> blockStateEntities = BlockUtils.findBlocksInChunk(chunk, blockStates);
 
         // get the stored block entities
         final List<CompoundTag> blockEntities = chunk.getData().getList("block_entities").stream()
@@ -44,7 +45,7 @@ public class DatalessModule extends SearchModule {
      * @param chunk
      * @return list of results
      */
-    private Collection<? extends DatalessResult> checkBlockEntities(List<CompoundTag> blockEntities, List<BlockUtils.BlockPosition> blockStateEntities, Chunk chunk) {
+    private Collection<? extends DatalessResult> checkBlockEntities(List<CompoundTag> blockEntities, List<BlockState> blockStateEntities, Chunk chunk) {
         final List<DatalessResult> results = new ArrayList<>();
         blockEntityLoop:
         for (CompoundTag blockEntity : blockEntities) {
@@ -58,19 +59,20 @@ public class DatalessModule extends SearchModule {
                 blockEntityId = blockEntityId.substring(10);
             }
 
-            for (BlockUtils.BlockPosition position : blockStateEntities) {
-                if (position.positionMatches(x,y,z)) {
-                    if (BlockEntityMapping.isValidBlockForBlockEntity(blockEntityId, position.getBlockId())) {
+            for (BlockState blockState : blockStateEntities) {
+                if (blockState.positionMatches(x,y,z)) {
+                    if (BlockEntityMapping.isValidBlockForBlockEntity(blockEntityId, blockState.getId())) {
                         // block entity exists in block state form, all good
                         continue blockEntityLoop;
                     }
                     // there's a different block entity block state in this block entities position, log
-                    results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITH_MISMATCHED_BLOCK", blockEntityId, position.getBlockId()));
+                    results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITH_MISMATCHED_BLOCK", blockEntityId, blockState.getId()));
                     continue blockEntityLoop;
                 }
             }
             // no matching block state for the block entity found, log
-            results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITHOUT_BLOCK", blockEntityId, BlockUtils.getBlockAtCoordinate(chunk, x,y,z)));
+            final BlockState actual = BlockUtils.getBlockAtCoordinate(chunk, x,y,z);
+            results.add(new DatalessResult(x,y,z, "BLOCK_ENTITY_WITHOUT_BLOCK", blockEntityId, (actual == null ? "null" : actual.getId())));
         }
         return results;
     }
@@ -81,11 +83,11 @@ public class DatalessModule extends SearchModule {
      * @param blockEntities chunk block entities
      * @return list of results
      */
-    private List<DatalessResult> checkBlockStates(final List<BlockUtils.BlockPosition> blockStateEntities, final List<CompoundTag> blockEntities) {
+    private List<DatalessResult> checkBlockStates(final List<BlockState> blockStateEntities, final List<CompoundTag> blockEntities) {
         final List<DatalessResult> results = new ArrayList<>();
         blockStatesLoop:
-        for (BlockUtils.BlockPosition position : blockStateEntities) {
-            String expectedBlockEntity = BlockEntityMapping.getBlockEntityForBlock(position.getBlockId());
+        for (BlockState blockState : blockStateEntities) {
+            String expectedBlockEntity = BlockEntityMapping.getBlockEntityForBlock(blockState.getId());
             // check if it exists in the block entity list
             for (CompoundTag blockEntity : blockEntities) {
                 int x = blockEntity.getInt("x");
@@ -98,7 +100,7 @@ public class DatalessModule extends SearchModule {
                     blockEntityId = blockEntityId.substring(10);
                 }
 
-                if (position.positionMatches(x,y,z)) {
+                if (blockState.positionMatches(x,y,z)) {
                     if (expectedBlockEntity.equals(blockEntityId)) {
                         // block state exists in block entity form, all good
                         continue blockStatesLoop;
@@ -110,10 +112,10 @@ public class DatalessModule extends SearchModule {
             }
             // block state doesn't exist in the block entity form -> log it
             results.add(new DatalessResult(
-                    position.getX(),
-                    position.getY(),
-                    position.getZ(),
-                    "BLOCK_WITHOUT_BLOCK_ENTITY", position.getBlockId(), "null")
+                    blockState.getX(),
+                    blockState.getY(),
+                    blockState.getZ(),
+                    "BLOCK_WITHOUT_BLOCK_ENTITY", blockState.getId(), "null")
             );
         }
 

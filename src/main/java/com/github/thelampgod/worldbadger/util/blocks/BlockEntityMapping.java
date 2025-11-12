@@ -1,4 +1,4 @@
-package com.github.thelampgod.worldbadger.util;
+package com.github.thelampgod.worldbadger.util.blocks;
 
 import java.util.*;
 
