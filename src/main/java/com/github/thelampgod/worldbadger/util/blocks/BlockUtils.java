@@ -1,5 +1,6 @@
 package com.github.thelampgod.worldbadger.util.blocks;
 
+import com.github.thelampgod.worldbadger.util.Helper;
 import net.querz.mca.Chunk;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
@@ -121,7 +122,7 @@ public class BlockUtils {
 
         if (tag.containsKey("Properties")) {
             tag.getCompound("Properties").forEach(prop -> {
-                properties.add(new Property(prop.getKey(), prop.getValue().toString()));
+                properties.add(new Property(prop.getKey(), Helper.SNBT_WRITER.toString(prop.getValue())));
             });
         }
 
