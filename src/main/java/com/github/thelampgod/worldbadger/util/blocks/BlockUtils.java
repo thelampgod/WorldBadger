@@ -123,7 +123,8 @@ public class BlockUtils {
 
         if (tag.containsKey("Properties")) {
             tag.getCompound("Properties").forEach(prop -> {
-                properties.put(prop.getKey(), Helper.SNBT_WRITER.toString(prop.getValue()));
+                String value = Helper.SNBT_WRITER.toString(prop.getValue()).replaceAll("\"", "");
+                properties.put(prop.getKey(), value);
             });
         }
 
