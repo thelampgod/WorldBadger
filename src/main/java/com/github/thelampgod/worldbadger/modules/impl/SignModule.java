@@ -42,7 +42,7 @@ public class SignModule extends BlockEntitySearchModule {
         private final int x;
         private final int y;
         private final int z;
-        private final String id; //hanging_sign or sign
+        private final boolean isHanging; // is hanging_sign
 
         private final Message frontText;
         private final Message backText;
@@ -50,6 +50,7 @@ public class SignModule extends BlockEntitySearchModule {
         public static SignData fromModel(CompoundTag sign) {
             Message frontText = getMessages(sign.getCompound("front_text"));
             Message backText = getMessages(sign.getCompound("back_text"));
+            boolean isHanging = sign.getString("id").equals("hanging_sign");
 
             if (EMPTY_SIGN.equals(frontText)) {
                 frontText = null;
@@ -63,7 +64,7 @@ public class SignModule extends BlockEntitySearchModule {
                     sign.getInt("x"),
                     sign.getInt("y"),
                     sign.getInt("z"),
-                    sign.getString("id"),
+                    isHanging,
                     frontText,
                     backText
             );
@@ -81,12 +82,12 @@ public class SignModule extends BlockEntitySearchModule {
 
         @Override
         public List<String> getFieldNames() {
-            return List.of("x", "y", "z", "frontText", "backText");
+            return List.of("x", "y", "z", "isHanging", "frontText", "backText");
         }
 
         @Override
         public List<Object> getFieldValues() {
-            return Arrays.asList(x, y, z, frontText, backText);
+            return Arrays.asList(x, y, z, isHanging, frontText, backText);
         }
     }
 
