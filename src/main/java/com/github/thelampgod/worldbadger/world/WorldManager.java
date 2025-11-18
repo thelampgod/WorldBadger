@@ -40,6 +40,14 @@ public class WorldManager {
 
         int total = (shouldSearchRegions ? world.getRegions().size() : 0) + (shouldSearchEntities ? world.getEntities().size() : 0);
         ProgressBar progress = new ProgressBar(total, main.getOutputMode());
+        new Thread(() -> {
+            while (progress.shouldRun()) {
+                try {
+                    progress.printProgressBar();
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {}
+            }
+        }).start();
 
         if (shouldSearchRegions) {
             world.getRegions().parallelStream()
@@ -48,7 +56,6 @@ public class WorldManager {
                             region.load();
                             region.forEach(chunk -> main.getModuleManager().processChunk(chunk));
                             progress.increment();
-                            progress.printProgressBar();
                         } catch (IOException e) {
                             main.logger.error("Failed to load region {}", region.getName());
                         } finally {
@@ -65,8 +72,6 @@ public class WorldManager {
                             region.load();
                             region.forEach(chunk -> main.getModuleManager().processEntities(chunk));
                             progress.increment();
-                            progress.printProgressBar();
-
                         } catch (IOException e) {
                             main.logger.error("Failed to load region {}", region.getName());
                         } finally {
@@ -75,6 +80,7 @@ public class WorldManager {
                     });
         }
 
+        progress.close();
         System.out.println();
         main.logger.info("Search finished in {}ms", System.currentTimeMillis() - start);
         main.getOutputMode().close();

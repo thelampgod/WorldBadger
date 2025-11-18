@@ -10,6 +10,7 @@ public class ProgressBar {
     private final int total;
     private int current;
     private boolean shouldPrint = true;
+    private boolean running = true;
 
     private static final int LINE_LENGTH = 50;
 
@@ -32,5 +33,13 @@ public class ProgressBar {
         String line = current + ".".repeat(LINE_LENGTH - progress);
         System.out.printf(DEL_LINE);
         System.out.printf("%s (%d/%d regions)", line, this.current, this.total);
+    }
+
+    public boolean shouldRun() {
+        return running;
+    }
+
+    public void close() {
+        this.running = false;
     }
 }
