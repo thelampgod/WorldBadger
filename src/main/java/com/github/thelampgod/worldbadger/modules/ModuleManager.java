@@ -23,6 +23,7 @@ public class ModuleManager {
         put("block-entity", new BlockEntityModule());
         put("dataless", new DatalessModule());
         put("half-door", new HalfDoorModule());
+        put("activated-spawner", new ActivatedSpawnerModule());
     }
 
 
