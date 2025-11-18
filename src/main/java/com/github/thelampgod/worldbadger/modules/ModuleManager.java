@@ -56,7 +56,7 @@ public class ModuleManager {
                     var ret = mod.processChunkBlockEntities(blockEntities);
                     instance.getOutputMode().processChunkResult(mod.getName(), ret);
                 } catch (Exception e) {
-                    instance.logger.error("Failed to process chunk block entities {}: {}", chunk.getX() + "," + chunk.getZ(), e.getMessage());
+                    instance.logger.error("Failed to process chunk block entities {}: {}", chunk.getX() + "," + chunk.getZ(), e.getMessage(), e);
                 }
                 return;
             }

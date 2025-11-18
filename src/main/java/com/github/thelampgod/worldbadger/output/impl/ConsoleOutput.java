@@ -3,13 +3,15 @@ package com.github.thelampgod.worldbadger.output.impl;
 import com.github.thelampgod.worldbadger.output.DataClass;
 import com.github.thelampgod.worldbadger.output.OutputMode;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.nio.file.Path;
 import java.util.List;
 
 public class ConsoleOutput implements OutputMode {
-
-    public Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .create();
 
     @Override
     public void initialize(Path outputFolder) {
@@ -25,6 +27,9 @@ public class ConsoleOutput implements OutputMode {
             for (int i = 0; i < data.getFieldNames().size(); ++i) {
                 String fieldName = data.getFieldNames().get(i);
                 Object value = data.getFieldValues().get(i);
+                if (value == null) {
+                    value = "";
+                }
                 if (!value.getClass().isPrimitive()) {
                     value = gson.toJson(value);
                 }

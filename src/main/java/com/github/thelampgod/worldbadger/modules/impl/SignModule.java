@@ -6,9 +6,13 @@ import lombok.Data;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SignModule extends BlockEntitySearchModule {
+
+    private static final Message EMPTY_SIGN = new Message(new String[]{"", "", "", ""}, "black", false);
+
     public SignModule() {
         super("sign");
     }
@@ -47,6 +51,13 @@ public class SignModule extends BlockEntitySearchModule {
             Message frontText = getMessages(sign.getCompound("front_text"));
             Message backText = getMessages(sign.getCompound("back_text"));
 
+            if (EMPTY_SIGN.equals(frontText)) {
+                frontText = null;
+            }
+
+            if (EMPTY_SIGN.equals(backText)) {
+                backText = null;
+            }
 
             return new SignData(
                     sign.getInt("x"),
@@ -75,7 +86,7 @@ public class SignModule extends BlockEntitySearchModule {
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, y, z, frontText, backText);
+            return Arrays.asList(x, y, z, frontText, backText);
         }
     }
 
