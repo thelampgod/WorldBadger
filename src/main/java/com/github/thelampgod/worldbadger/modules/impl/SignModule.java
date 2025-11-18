@@ -6,10 +6,8 @@ import lombok.Data;
 import net.querz.nbt.CompoundTag;
 import net.querz.nbt.ListTag;
 
-import java.util.ArrayList;
 import java.util.List;
 
-//TODO: handle hanging_sign
 public class SignModule extends BlockEntitySearchModule {
     public SignModule() {
         super("sign");
@@ -17,16 +15,22 @@ public class SignModule extends BlockEntitySearchModule {
 
     @Override
     public List<? extends DataClass> processChunkBlockEntities(List<CompoundTag> blockEntities) {
-        List<SignData> signs = new ArrayList<>();
+        return blockEntities.stream()
+                .filter(tag -> tag.getString("id").equals("minecraft:sign") ||
+                                            tag.getString("id").equals("minecraft:hanging_sign"))
+                .filter(this::isInRange)
+                .map(SignData::fromModel)
+                .toList();
+    }
 
-        blockEntities.stream()
-                .filter(tag -> tag.getString("id").equals("minecraft:sign"))
-//                .filter(this::isInRange)  //TODO: coordinate settings
-                .forEach(sign -> {
-                    signs.add(SignData.fromModel(sign));
-                });
+    private boolean isInRange(CompoundTag sign) {
+        var options = this.idToOptionsMap.get("all");
+        int minY = options != null && options.containsKey("min") ? Integer.parseInt(options.get("min")) : Integer.MIN_VALUE;
+        int maxY = options != null && options.containsKey("max") ? Integer.parseInt(options.get("max")) : Integer.MAX_VALUE;
 
-        return signs;
+        final int signY = sign.getInt("y");
+
+        return signY >= minY && signY <= maxY;
     }
 
     @Data
@@ -34,42 +38,66 @@ public class SignModule extends BlockEntitySearchModule {
         private final int x;
         private final int y;
         private final int z;
+        private final String id; //hanging_sign or sign
 
-        private final String[] frontText; //TODO: back_text?
-        private final String color;
-        private final boolean glowing;
+        private final Message frontText;
+        private final Message backText;
 
         public static SignData fromModel(CompoundTag sign) {
-            var front_text = sign.getCompound("front_text");
-            ListTag messages = front_text.getList("messages");
-            String[] temp = new String[4];
-            for (int i = 0; i < 4; ++i) {
-                temp[i] = messages.getString(i);
-            }
+            Message frontText = getMessages(sign.getCompound("front_text"));
+            Message backText = getMessages(sign.getCompound("back_text"));
 
 
-            return new SignData(sign.getInt("x"),
+            return new SignData(
+                    sign.getInt("x"),
                     sign.getInt("y"),
                     sign.getInt("z"),
-                    temp,
-                    front_text.getString("color"),
-                    front_text.getBoolean("has_glowing_text")
+                    sign.getString("id"),
+                    frontText,
+                    backText
             );
+        }
+
+        private static Message getMessages(CompoundTag tag) {
+            ListTag messages = tag.getList("messages");
+            String[] lines = new String[4];
+            for (int i = 0; i < 4; ++i) {
+                lines[i] = messages.getString(i);
+            }
+
+            return new Message(lines, tag.getString("color"), tag.getBoolean("has_glowing_text"));
         }
 
         @Override
         public List<String> getFieldNames() {
-            return List.of("x", "y", "z", "frontText", "color", "glowing");
+            return List.of("x", "y", "z", "frontText", "backText");
         }
 
         @Override
         public List<Object> getFieldValues() {
-            return List.of(x, y, z, frontText, color, glowing);
+            return List.of(x, y, z, frontText, backText);
         }
+    }
+
+    @Data
+    private static class Message {
+        private final String[] lines;
+        private final String color;
+        private final boolean glowing;
     }
 
     @Override
     public String getDescription() {
         return "Find all signs in the world with their data.";
+    }
+
+    @Override
+    public List<String> getValidOptions() {
+        return List.of("min", "max");
+    }
+
+    @Override
+    public boolean requiresId() {
+        return false;
     }
 }
