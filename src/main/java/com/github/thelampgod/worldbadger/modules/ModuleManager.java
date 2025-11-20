@@ -25,6 +25,7 @@ public class ModuleManager {
         put("half-door", new HalfDoorModule());
         put("activated-spawner", new ActivatedSpawnerModule());
         put("spawner", new SpawnerModule());
+        put("formation-finder", new FormationFinderModule(instance));
     }
 
 
