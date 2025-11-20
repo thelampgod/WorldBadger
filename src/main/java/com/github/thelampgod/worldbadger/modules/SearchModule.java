@@ -26,6 +26,7 @@ public abstract class SearchModule {
 
 
     public void toggle() {
+        this.idToOptionsMap.clear();
         this.toggled = !toggled;
     }
 

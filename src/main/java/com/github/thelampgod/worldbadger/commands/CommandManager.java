@@ -15,6 +15,8 @@ public class CommandManager {
 
     private void init(WorldBadger main) {
         put("add", new AddModuleCommand(main));
+        put("remove", new RemoveModuleCommand(main));
+        put("toggle", new ToggleModuleCommand(main));
         put("run", new RunCommand(main));
         put("world", new SetInputCommand(main));
         put("outputfolder", new SetOutputFolderCommand(main));

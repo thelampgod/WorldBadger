@@ -2,15 +2,12 @@ package com.github.thelampgod.worldbadger.commands.impl;
 
 import com.github.thelampgod.worldbadger.WorldBadger;
 import com.github.thelampgod.worldbadger.commands.Command;
-import com.github.thelampgod.worldbadger.commands.CommandNotFoundException;
 import com.github.thelampgod.worldbadger.modules.ModuleNotFoundException;
 import com.github.thelampgod.worldbadger.modules.SearchModule;
 
-import java.util.Arrays;
+public class RemoveModuleCommand extends Command {
 
-public class AddModuleCommand extends Command {
-
-    public AddModuleCommand(WorldBadger main) {
+    public RemoveModuleCommand(WorldBadger main) {
         super(main);
     }
 
@@ -20,10 +17,10 @@ public class AddModuleCommand extends Command {
         try {
             SearchModule module = main.getModuleManager().findModule(args[0].trim().toLowerCase());
 
-            module.setToggled(true);
-            module.options(Arrays.copyOfRange(args, 1, args.length));
+            module.getIdToOptionsMap().clear();
+            module.setToggled(false);
 
-            main.logger.info("Added {} to module list.", module.getName());
+            main.logger.info("Removed {} from module list.", module.getName());
         } catch (ModuleNotFoundException e) {
             main.logger.error("{}: module not found.", args[0]);
         }
@@ -31,7 +28,7 @@ public class AddModuleCommand extends Command {
 
     @Override
     public String description() {
-        return "Adds a search module to be ran.";
+        return "Removes a module to be ran.";
     }
 
     @Override
