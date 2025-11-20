@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     // nbt/mca
-    implementation("com.github.Querz:NBT:nbt7-SNAPSHOT")
+    implementation("com.github.Querz:NBT:6.1")
 
     //logging
     implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
