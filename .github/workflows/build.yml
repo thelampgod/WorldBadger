@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
+  workflow_dispatch:
+
+# Cancel in-progress runs when a new workflow on the same ref is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required for dependency graph submission
+      actions: read
+      pull-requests: read  # Required for dependency review on PRs
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Dependency Review (PRs only)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          # Read-only cache for PRs, write on master branch
+          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+          # Generate dependency graph for Dependabot security alerts
+          dependency-graph: generate-and-submit
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: WorldBadger-${{ github.run_number }}
+          path: build/libs/*.jar
+          retention-days: 30
