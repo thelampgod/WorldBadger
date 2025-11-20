@@ -66,9 +66,13 @@ public class FormationFinderModule extends SearchModule {
                     .map(line -> {
                         String[] parts = line.split(",");
                         int x = Integer.parseInt(parts[0]) & 15;
-                        int y = Integer.parseInt(parts[1]) & 319;
+                        int y = Integer.parseInt(parts[1]);
                         int z = Integer.parseInt(parts[2]) & 15;
                         String blockId = parts[3];
+
+                        if (y < -64 || y > 319) {
+                            throw new IllegalArgumentException("Y coordinate " + y + " out of range (-64 to 319)");
+                        }
 
                         return new BlockState(x,y,z,blockId, Map.of());
                     }).toList();
