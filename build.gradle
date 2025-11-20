@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = 'com.github.thelampgod'
@@ -8,7 +8,7 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io/' }
+    maven { url = 'https://jitpack.io/' }
     mavenLocal()
 }
 
@@ -17,15 +17,15 @@ dependencies {
     implementation("com.github.Querz:NBT:nbt7-SNAPSHOT")
 
     //logging
-    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
 
     //gson
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.11.0'
 
     //database
-    implementation "org.xerial:sqlite-jdbc:3.43.0.0"
-    implementation "org.apache.commons:commons-dbcp2:2.10.0"
+    implementation "org.xerial:sqlite-jdbc:3.47.1.0"
+    implementation "org.apache.commons:commons-dbcp2:2.12.0"
 
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
@@ -34,7 +34,7 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.36'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
