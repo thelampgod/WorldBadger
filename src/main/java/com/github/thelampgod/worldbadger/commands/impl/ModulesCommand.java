@@ -21,10 +21,12 @@ public class ModulesCommand extends Command {
                     builder.append("> ")
                             .append(module.getName())
                             .append(": ")
-                            .append(module.getDescription())
-                            .append(" Options: ")
-                            .append(Arrays.toString(module.getValidOptions().toArray()))
-                            .append("\n");
+                            .append(module.getDescription());
+                    if (!module.getValidOptions().isEmpty()) {
+                        builder.append(" Options: ")
+                                .append(Arrays.toString(module.getValidOptions().toArray()));
+                    }
+                    builder.append("\n");
                 });
 
         main.logger.info(builder.toString());

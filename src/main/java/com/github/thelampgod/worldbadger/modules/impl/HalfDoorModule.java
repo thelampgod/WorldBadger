@@ -89,6 +89,6 @@ public class HalfDoorModule extends SearchModule {
 
     @Override
     public String getDescription() {
-        return "Finds doors that lack a top or bottom half";
+        return "Finds doors that lack a top or bottom half.";
     }
 }
