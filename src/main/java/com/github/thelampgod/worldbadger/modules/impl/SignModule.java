@@ -49,7 +49,12 @@ public class SignModule extends BlockEntitySearchModule {
 
         public static SignData fromModel(CompoundTag sign) {
             Message frontText = getMessages(sign.getCompound("front_text"));
-            Message backText = getMessages(sign.getCompound("back_text"));
+
+            Message backText = null;
+            if (sign.containsKey("back_text")) {
+                backText = getMessages(sign.getCompound("back_text"));
+            }
+
             boolean isHanging = sign.getString("id").equals("hanging_sign");
 
             if (EMPTY_SIGN.equals(frontText)) {

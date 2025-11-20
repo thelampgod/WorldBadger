@@ -144,7 +144,7 @@ public class Database {
 
     private void setPreparedStatementValue(PreparedStatement stmt, int index, Object value) throws SQLException {
         if (value == null) {
-            stmt.setNull(index, Types.NULL);
+            stmt.setString(index, "");
         } else if (value instanceof Integer) {
             stmt.setInt(index, (Integer) value);
         } else if (value instanceof Long) {

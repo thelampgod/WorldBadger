@@ -14,6 +14,7 @@ public class ExitCommand extends Command {
 
         main.logger.info("Bye!");
         main.setRunning(false);
+        main.getWorldManager().stopSearch();
     }
 
     @Override
