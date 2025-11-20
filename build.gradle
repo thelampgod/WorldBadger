@@ -17,8 +17,8 @@ dependencies {
     implementation("com.github.Querz:NBT:nbt7-SNAPSHOT")
 
     //logging
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
 
     //gson
     implementation 'com.google.code.gson:gson:2.11.0'
