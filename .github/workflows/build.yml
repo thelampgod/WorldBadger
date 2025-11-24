@@ -19,9 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Required for dependency graph submission
       actions: read
-      pull-requests: read  # Required for dependency review on PRs
 
     steps:
       - name: Checkout code
@@ -33,17 +31,11 @@ jobs:
           java-version: 21
           distribution: 'temurin'
 
-      - name: Dependency Review (PRs only)
-        if: github.event_name == 'pull_request'
-        uses: actions/dependency-review-action@v4
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
           # Read-only cache for PRs, write on master branch
           cache-read-only: ${{ github.ref != 'refs/heads/master' }}
-          # Generate dependency graph for Dependabot security alerts
-          dependency-graph: generate-and-submit
 
       - name: Build with Gradle
         run: ./gradlew build
