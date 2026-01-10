@@ -21,6 +21,8 @@ public class ModuleManager {
         put("entity", new EntityModule());
         put("oldchunks", new OldChunksModule());
         put("block-entity", new BlockEntityModule());
+        put("dataless", new DatalessModule());
+        put("half-door", new HalfDoorModule());
     }
 
 
