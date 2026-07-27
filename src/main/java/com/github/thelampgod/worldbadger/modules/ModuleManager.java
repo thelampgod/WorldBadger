@@ -19,7 +19,7 @@ public class ModuleManager {
         put("sign", new SignModule());
         put("block", new BlockModule());
         put("entity", new EntityModule());
-        put("oldchunks", new OldChunksModule());
+        put("oldchunks", new OldChunksModule(instance));
         put("block-entity", new BlockEntityModule());
         put("dataless", new DatalessModule());
         put("half-door", new HalfDoorModule());

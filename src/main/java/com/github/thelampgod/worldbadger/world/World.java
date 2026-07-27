@@ -14,9 +14,11 @@ public class World {
     private List<UnloadableMcaFile> entities = new ArrayList<>();
 
     private final Path worldRoot;
+    private final int dimension;
 
     public World(String worldPath, int dimension) throws IOException {
         this.worldRoot = Path.of(worldPath);
+        this.dimension = dimension;
         findRegions(dimension);
     }
 
